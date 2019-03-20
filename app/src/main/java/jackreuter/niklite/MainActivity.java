@@ -38,7 +38,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
 
     MenuFragment menuFragment;
     FragmentManager fragmentManager;
-    FragmentTransaction fragmentTansaction;
+    FragmentTransaction fragmentTransaction;
 
     final int FADE_TIME = 3000;
     final int BUFFER_SIZE = 20;
@@ -58,6 +58,8 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
     boolean kelvinMode;
     boolean lockMode;
     boolean shapeMode;
+    boolean strobeMode;
+    boolean menuEnabled;
 
     private ScaleGestureDetector scaleDetector;
 
@@ -85,6 +87,8 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
         setUIEnabled(false);
         kelvinMode = false;
         lockMode = false;
+        strobeMode = false;
+        menuEnabled = false;
 
         mdisp = getWindowManager().getDefaultDisplay();
         mdispSize = new Point();
@@ -105,7 +109,6 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
 
     /** enables or disables textView and menuButton */
     public void setUIEnabled(Boolean bool) {
-        Log.d("","toggle");
         menuButton.setEnabled(bool);
         if (bool) {
             menuButton.setVisibility(View.VISIBLE);
@@ -119,6 +122,9 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
     /** change color based on touch position */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (menuEnabled) {
+            menuFragment.close();
+        }
         scaleDetector.onTouchEvent(event);
 
         //enable and disable UI
@@ -200,24 +206,38 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
+            if (shapeMode) {
+                float tmpSize = shapeSize * detector.getScaleFactor();
 
-            shapeSize *= detector.getScaleFactor();
-            colorView.requestLayout();
-            colorView.getLayoutParams().height = (int) (shapeSize);
-            colorView.getLayoutParams().width = (int) (shapeSize);
+                // Don't let the object get too small or too large.
+                if (tmpSize <= 100) {
+                    tmpSize = 100;
+                }
 
-            // Don't let the object get too small or too large.
-            //shapeSize = Math.max(0.1f, Math.min(shapeSize, 5.0f));
+                if (tmpSize >= maxX) {
+                    tmpSize = maxX;
+                }
+
+                if (tmpSize >= maxY) {
+                    tmpSize = maxY;
+                }
+
+                shapeSize = tmpSize;
+                colorView.requestLayout();
+                colorView.getLayoutParams().height = (int) (shapeSize);
+                colorView.getLayoutParams().width = (int) (shapeSize);
+            }
             return true;
         }
     }
 
     /** start menu fragment */
     public void onClickMenu(View view) {
-        menuFragment = MenuFragment.newInstance(kelvinMode, lockMode, shapeMode);
-        fragmentTansaction = getFragmentManager().beginTransaction();
-        fragmentTansaction.replace(R.id.menuFrame, menuFragment);
-        fragmentTansaction.commit();
+        menuFragment = MenuFragment.newInstance(kelvinMode, lockMode, shapeMode, strobeMode);
+        fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.menuFrame, menuFragment);
+        fragmentTransaction.commit();
+        menuEnabled = true;
     }
 
     /** colorWheel logic for non-kelvin mode */
@@ -255,7 +275,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
                     yLim = 0 + BUFFER_SIZE;
                     xLim = (yLim - b) / m;
                 } else {
-                    xLim = maxX + BUFFER_SIZE;
+                    xLim = maxX - BUFFER_SIZE;
                     yLim = m * xLim + b;
                 }
 
@@ -267,7 +287,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
 
                 //figure out endpoint of line through center
                 if (b > maxY) {
-                    yLim = maxY + BUFFER_SIZE;
+                    yLim = maxY - BUFFER_SIZE;
                     xLim = (yLim - b) / m;
                 } else {
                     xLim = 0 + BUFFER_SIZE;
@@ -280,10 +300,10 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
 
                 //figure out endpoint of line through center
                 if (b < 0) {
-                    yLim = maxY + BUFFER_SIZE;
+                    yLim = maxY - BUFFER_SIZE;
                     xLim = (yLim - b) / m;
                 } else {
-                    xLim = maxX + BUFFER_SIZE;
+                    xLim = maxX - BUFFER_SIZE;
                     yLim = m * xLim + b;
                 }
 
@@ -377,9 +397,9 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
 
         /**
         //kill menu fragment
-        fragmentTansaction = getFragmentManager().beginTransaction();
-        fragmentTansaction.remove(menuFragment);
-        fragmentTansaction.commit();
+        fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.remove(menuFragment);
+        fragmentTransaction.commit();
          */
     }
 
@@ -389,9 +409,9 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
 
         /**
         //kill menu fragment
-        fragmentTansaction = getFragmentManager().beginTransaction();
-        fragmentTansaction.remove(menuFragment);
-        fragmentTansaction.commit();
+        fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.remove(menuFragment);
+        fragmentTransaction.commit();
          */
     }
 
@@ -415,17 +435,22 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
 
         /**
         //kill menu fragment
-        fragmentTansaction = getFragmentManager().beginTransaction();
-        fragmentTansaction.remove(menuFragment);
-        fragmentTansaction.commit();
+        fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.remove(menuFragment);
+        fragmentTransaction.commit();
          */
     }
 
     @Override
-    public void onCloseButtonClick() {
+    public void onStrobeButtonClick() {
+        strobeMode = !strobeMode;
+    }
+
+    @Override
+    public void onClose() {
         //kill menu fragment
-        fragmentTansaction = getFragmentManager().beginTransaction();
-        fragmentTansaction.remove(menuFragment);
-        fragmentTansaction.commit();
+        fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.remove(menuFragment);
+        fragmentTransaction.commit();
     }
 }

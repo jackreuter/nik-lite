@@ -16,24 +16,27 @@ public class MenuFragment extends Fragment {
     boolean kelvinMode;
     boolean lockMode;
     boolean shapeMode;
+    boolean strobeMode;
     MenuListener activityCallback;
 
     public interface MenuListener {
         public void onKelvinButtonClick();
         public void onLockButtonClick();
         public void onShapeButtonClick();
-        public void onCloseButtonClick();
+        public void onStrobeButtonClick();
+        public void onClose();
     }
 
     public MenuFragment() {
         // Required empty public constructor
     }
 
-    public static MenuFragment newInstance(boolean kelvin, boolean lock, boolean shape) {
+    public static MenuFragment newInstance(boolean kelvin, boolean lock, boolean shape, boolean strobe) {
         Bundle bundle = new Bundle();
         bundle.putBoolean("kelvin", kelvin);
         bundle.putBoolean("lock", lock);
         bundle.putBoolean("shape", shape);
+        bundle.putBoolean("strobe", strobe);
 
         MenuFragment fragment = new MenuFragment();
         fragment.setArguments(bundle);
@@ -46,6 +49,7 @@ public class MenuFragment extends Fragment {
             kelvinMode = bundle.getBoolean("kelvin");
             lockMode = bundle.getBoolean("lock");
             shapeMode = bundle.getBoolean("shape");
+            strobeMode = bundle.getBoolean("strobe");
         }
     }
 
@@ -77,10 +81,10 @@ public class MenuFragment extends Fragment {
             }
         });
 
-        final Button closeButton = (Button) view.findViewById(R.id.closeButton);
-        closeButton.setOnClickListener(new View.OnClickListener() {
+        final Button strobeButton = (Button) view.findViewById(R.id.strobeButton);
+        strobeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                closeButtonClicked(v);
+                strobeButtonClicked(v);
             }
         });
 
@@ -92,6 +96,9 @@ public class MenuFragment extends Fragment {
 
         if (shapeMode) { shapeButton.setText("FULL"); }
         else { shapeButton.setText("SHAPE"); }
+
+        if (strobeMode) { strobeButton.setText("NORMAL"); }
+        else { strobeButton.setText("STROBE"); }
 
         return view;
 
@@ -121,9 +128,17 @@ public class MenuFragment extends Fragment {
         activityCallback.onShapeButtonClick();
     }
 
-    public void closeButtonClicked(View view) {
-        activityCallback.onCloseButtonClick();
+
+    public void strobeButtonClicked(View view) {
+        strobeMode = !strobeMode;
+        final Button strobeButton = (Button) view.findViewById(R.id.strobeButton);
+        if (strobeMode) { strobeButton.setText("NORMAL"); }
+        else { strobeButton.setText("STROBE"); }
+        activityCallback.onStrobeButtonClick();
     }
+
+
+    public void close() { activityCallback.onClose(); }
 
     @Override
     public void onAttach(Activity activity) {
