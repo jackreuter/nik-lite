@@ -1,30 +1,21 @@
 package jackreuter.niklite;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.ShapeDrawable;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
-import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -32,11 +23,7 @@ import android.view.WindowManager;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.app.Fragment;
 
 public class MainActivity extends Activity implements MenuFragment.MenuListener {
 
@@ -52,16 +39,14 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
     private Handler strobeHandler;
     private Handler uiHandler;
 
-
     final int FADE_TIME = 3000;
     final int BUFFER_SIZE = 20;
     final int TEMPERATURE_MAX = 15000;
     final int TEMPERATURE_MIN = 1000;
 
-    int colorInt;
-    int redValue;
-    int greenValue;
-    int blueValue;
+    int globalColorInt;
+    int rgbColorInt;
+    int temperature;
     float maxX;
     float maxY;
     float shapeSize;
@@ -76,7 +61,9 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
     boolean strobeMode;
     boolean isDark;
     boolean menuEnabled;
-    boolean sliderInUse;
+
+    int [] shapeIDs;
+    int currentShapeIndex;
 
     private ScaleGestureDetector scaleDetector;
     private int brightness;
@@ -115,7 +102,12 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
         strobeMode = false;
         isDark = false;
         menuEnabled = false;
-        sliderInUse = false;
+
+        shapeIDs = new int[]{
+                R.drawable.circle,
+                R.drawable.ring,
+        };
+        currentShapeIndex = 0; //default to circle
 
         mdisp = getWindowManager().getDefaultDisplay();
         mdispSize = new Point();
@@ -129,10 +121,9 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
         lightDuration = 500; //default strobe .5 second light
         darkDuration = 1000; //default strobe 1 second dark
 
-        redValue = 255; //default color WHITE
-        greenValue = 255;
-        blueValue = 255;
-        colorView.setBackgroundColor(Color.rgb(redValue, greenValue, blueValue));
+        rgbColorInt = Color.WHITE; //default color WHITE
+        temperature = 1000; //default temperature 1000K
+        colorView.setBackgroundColor(rgbColorInt);
 
         scaleDetector = new ScaleGestureDetector(this, new ScaleListener());
         uiHandler = new Handler();
@@ -250,52 +241,46 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
         else {
             if (kelvinMode) {
                 //kelvin mode
-                float temperature = getTemperatureFromY(Y);
-                redValue = getRedValueFromTemperature(temperature/100);
-                greenValue = getGreenValueFromTemperature(temperature/100);
-                blueValue = getBlueValueFromTemperature(temperature/100);
-                colorInt = Color.rgb(redValue, greenValue, blueValue);
-
-                //if shape mode enable create the desired shape
-                if (shapeMode) {
-                    drawShape(R.drawable.circle);
-                } else {
-                    colorView.setBackgroundColor(colorInt);
-                }
+                temperature = getTemperatureFromY(Y);
+                globalColorInt = getColorIntFromTemperature();
+                colorBackground();
             } else {
                 //color wheel mode
                 float[] hsv = getHSVfromXY(X, Y);
-                colorInt = Color.HSVToColor(hsv);
-                redValue = Color.red(colorInt);
-                greenValue = Color.green(colorInt);
-                blueValue = Color.blue(colorInt);
-
-                //if shape mode enabled create the desired shape
-                if (shapeMode) {
-                    drawShape(R.drawable.circle);
-                } else {
-                    colorView.setBackgroundColor(colorInt);
-                }
+                rgbColorInt = Color.HSVToColor(hsv);
+                globalColorInt = rgbColorInt;
+                colorBackground();
             }
         }
         return true;
     }
 
+    /** creates background from global color int value */
+    public void colorBackground() {
+        //if shape mode enabled create the desired shape
+        if (shapeMode) {
+            drawShape(shapeIDs[currentShapeIndex], globalColorInt);
+        } else {
+            colorView.setBackgroundColor(globalColorInt);
+        }
+    }
+
     /** draws shape to colorView view */
-    public void drawShape(int shapeId) {
+    public void drawShape(int shapeId, int color) {
+
         Drawable colorShape = ResourcesCompat.getDrawable(getResources(), shapeId, null);
         if (colorShape instanceof ShapeDrawable) {
             // cast to 'ShapeDrawable'
             ShapeDrawable shapeDrawable = (ShapeDrawable) colorShape;
-            shapeDrawable.getPaint().setColor(colorInt);
+            shapeDrawable.getPaint().setColor(color);
         } else if (colorShape instanceof GradientDrawable) {
             // cast to 'GradientDrawable'
             GradientDrawable gradientDrawable = (GradientDrawable) colorShape;
-            gradientDrawable.setColor(colorInt);
+            gradientDrawable.setColor(color);
         } else if (colorShape instanceof ColorDrawable) {
             // alpha value may need to be set again after this call
             ColorDrawable colorDrawable = (ColorDrawable) colorShape;
-            colorDrawable.setColor(colorInt);
+            colorDrawable.setColor(color);
         }
         colorView.setBackgroundDrawable(colorShape);
     }
@@ -338,9 +323,10 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
                 strobeMode,
                 lightDuration,
                 darkDuration,
-                redValue,
-                greenValue,
-                blueValue
+                Color.red(rgbColorInt),
+                Color.green(rgbColorInt),
+                Color.blue(rgbColorInt),
+                temperature
         );
         fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.menuFrame, menuFragment);
@@ -448,19 +434,40 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
         }
     }
 
+    /** converts kelvin temperature into color */
+    public int getColorIntFromTemperature() {
+        float tmp = (float) (temperature/100.0);
+        int redValue = getRedValueFromTemperature(tmp);
+        int greenValue = getGreenValueFromTemperature(tmp);
+        int blueValue = getBlueValueFromTemperature(tmp);
+        return Color.rgb(redValue, greenValue, blueValue);
+    }
+
     /** calculate temperature based on y value*/
-    public float getTemperatureFromY(float yVal) {
-        return ((yVal / maxY) * TEMPERATURE_MAX) + TEMPERATURE_MIN;
+    public int getTemperatureFromY(float yVal) {
+        if (yVal <= 5) {
+            return TEMPERATURE_MAX;
+        } else if (maxY - yVal <= 5) {
+            return TEMPERATURE_MIN;
+        } else {
+            return (int) ((((maxY - yVal) / maxY) * (TEMPERATURE_MAX - TEMPERATURE_MIN)) + TEMPERATURE_MIN);
+        }
     }
 
     /** calculate red value based on temperature from
-     * http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/ */
+     * http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
+     * updated to http://www.zombieprototypes.com/?p=210*/
     public int getRedValueFromTemperature(float tVal) {
         if (tVal <= 66) {
             return 255;
         } else {
-            float red = tVal - 60;
-            red = (float) (329.698727446 * (Math.pow(red,-0.1332047592)));
+            //𝑎+𝑏𝑥+𝑐𝑙𝑛(𝑥)
+            double a = 351.97690566805693;
+            double b = 0.114206453784165;
+            double c = -40.25366309332127;
+            double x = tVal - 55;
+
+            double red = a + (b * x) + (c * Math.log(x));
             if (red < 0) { red = 0; }
             if (red > 255) { red = 255; }
             return (int) red;
@@ -468,15 +475,24 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
     }
 
     /** calculate green value based on temperature from
-     * http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/ */
+     * http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
+     * updated to http://www.zombieprototypes.com/?p=210 */
     public int getGreenValueFromTemperature(float tVal) {
-        float green;
+        double green;
         if (tVal <= 66) {
-            green = tVal;
-            green = (float) (99.4708025861 * Math.log(green) - 161.1195681661);
+            //𝑎+𝑏𝑥+𝑐𝑙𝑛(𝑥)
+            double a = -155.25485562709179;
+            double b = -0.44596950469579133;
+            double c = 104.49216199393888;
+            double x = tVal - 2;
+            green = a + (b * x) + (c * Math.log(x));
         } else {
-            green = tVal - 60;
-            green = (float) (288.1221695283 * Math.pow(green, -0.0755148492));
+            //𝑎+𝑏𝑥+𝑐𝑙𝑛(𝑥)
+            double a = 325.4494125711974;
+            double b = 0.07943456536662342;
+            double c = -28.0852963507957;
+            double x = tVal - 50;
+            green = a + (b * x) + (c * Math.log(x));
         }
         if (green < 0) { green = 0; }
         if (green > 255) { green = 255; }
@@ -484,15 +500,20 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
     }
 
     /** calculate blue value based on temperature from
-     * http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/ */
+     * http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
+     * updated to http://www.zombieprototypes.com/?p=210 */
     public int getBlueValueFromTemperature(float tVal) {
         if (tVal >= 66) {
             return 255;
-        } else if (tVal <= 19) {
+        } else if (tVal <= 20) {
             return 0;
         } else {
-            float blue = tVal - 10;
-            blue = (float) (138.5177312231 * Math.log(blue) - 305.0447927307);
+            //𝑎+𝑏𝑥+𝑐𝑙𝑛(𝑥)
+            double a = -254.76935184120902;
+            double b = 0.8274096064007395;
+            double c = 115.67994401066147;
+            double x = tVal - 10;
+            double blue = a + (b * x) + (c * Math.log(x));
             if (blue < 0) { blue = 0; }
             if (blue > 255) { blue = 255; }
             return (int) blue;
@@ -502,6 +523,12 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
     @Override
     public void onKelvinButtonClick() {
         kelvinMode = !kelvinMode;
+        if (kelvinMode) {
+            globalColorInt = getColorIntFromTemperature();
+        } else {
+            globalColorInt = rgbColorInt;
+        }
+        colorBackground();
     }
 
     @Override
@@ -513,9 +540,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
     public void onShapeButtonClick() {
         shapeMode = !shapeMode;
 
-        //circle shape
         if (shapeMode) {
-            drawShape(R.drawable.circle);
             colorView.requestLayout();
             colorView.getLayoutParams().height = (int) (shapeSize);
             colorView.getLayoutParams().width = (int) (shapeSize);
@@ -524,8 +549,9 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
             colorView.requestLayout();
             colorView.getLayoutParams().height = (int) (maxY);
             colorView.getLayoutParams().width = (int) (maxX);
-            colorView.setBackgroundColor(colorInt);
         }
+        colorBackground();
+
     }
 
     @Override
@@ -537,12 +563,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
         } else {
             stopStrobe();
             if (isDark) {
-                //if shape mode enable create the desired shape
-                if (shapeMode) {
-                    drawShape(R.drawable.circle);
-                } else {
-                    colorView.setBackgroundColor(colorInt);
-                }
+                colorBackground();
             }
         }
     }
@@ -559,41 +580,33 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
 
     @Override
     public void onRedSeekBarChanged(int seekBarValue) {
-        redValue = seekBarValue;
-        colorInt = Color.rgb(redValue, greenValue, blueValue);
-
-        //if shape mode enable create the desired shape
-        if (shapeMode) {
-            drawShape(R.drawable.circle);
-        } else {
-            colorView.setBackgroundColor(colorInt);
-        }
+        int redValue = seekBarValue;
+        rgbColorInt = Color.rgb(redValue, Color.green(rgbColorInt), Color.blue(rgbColorInt));
+        globalColorInt = rgbColorInt;
+        colorBackground();
     }
 
     @Override
     public void onGreenSeekBarChanged(int seekBarValue) {
-        greenValue = seekBarValue;
-        colorInt = Color.rgb(redValue, greenValue, blueValue);
-
-        //if shape mode enable create the desired shape
-        if (shapeMode) {
-            drawShape(R.drawable.circle);
-        } else {
-            colorView.setBackgroundColor(colorInt);
-        }
+        int greenValue = seekBarValue;
+        rgbColorInt = Color.rgb(Color.red(rgbColorInt), greenValue, Color.blue(rgbColorInt));
+        globalColorInt = rgbColorInt;
+        colorBackground();
     }
 
     @Override
     public void onBlueSeekBarChanged(int seekBarValue) {
-        blueValue = seekBarValue;
-        colorInt = Color.rgb(redValue, greenValue, blueValue);
+        int blueValue = seekBarValue;
+        rgbColorInt = Color.rgb(Color.red(rgbColorInt), Color.green(rgbColorInt), blueValue);
+        globalColorInt = rgbColorInt;
+        colorBackground();
+    }
 
-        //if shape mode enable create the desired shape
-        if (shapeMode) {
-            drawShape(R.drawable.circle);
-        } else {
-            colorView.setBackgroundColor(colorInt);
-        }
+    @Override
+    public void onKelvinSeekBarChanged(int seekBarValue) {
+        temperature = seekBarValue;
+        globalColorInt = getColorIntFromTemperature();
+        colorBackground();
     }
 
     /** define strobe light method */
@@ -602,11 +615,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
         public void run() {
             try {
                 if (isDark) {
-                    if (shapeMode) {
-                        drawShape(R.drawable.circle);
-                    } else {
-                        colorView.setBackgroundColor(colorInt);
-                    }
+                    colorBackground();
                 } else {
                     colorView.setBackgroundColor(Color.rgb(0, 0, 0));
                 }

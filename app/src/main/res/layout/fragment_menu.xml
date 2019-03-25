@@ -140,6 +140,29 @@
         android:thumb="@drawable/seek_thumb"/>
 
     <TextView
+        android:id="@+id/kelvinTextView"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#000000"
+        android:layout_margin="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/darkDurationSeekBar"
+        android:layout_centerHorizontal="true"/>
+
+
+    <jackreuter.niklite.VerticalSeekBar
+        android:id="@+id/kelvinSeekBar"
+        android:layout_marginBottom="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/kelvinTextView"
+        android:layout_centerHorizontal="true"
+        android:min="1000"
+        android:max="15000"
+        android:progressDrawable="@drawable/seek_bar"
+        android:thumb="@drawable/seek_thumb"/>
+
+    <TextView
         android:id="@+id/redValueTextView"
         android:fontFamily="sans-serif-medium"
         android:textColor="#000000"

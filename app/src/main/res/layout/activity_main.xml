@@ -37,8 +37,8 @@
             android:layout_height="300dp"
             android:layout_above="@id/menuButton"
             android:layout_alignParentRight="true"
-            android:progressDrawable="@drawable/seek_bar"
-            android:thumb="@drawable/seek_thumb"
+            android:progressDrawable="@drawable/brightness_seek_bar"
+            android:thumb="@drawable/brightness_seek_thumb"
             android:max="255"/>
 
         <FrameLayout

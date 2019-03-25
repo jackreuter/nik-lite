@@ -3,7 +3,12 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
-    <color name="seek_bar_background">#000000</color>
-    <color name="seek_bar_progress">#44000000</color>
+    <color name="seek_bar_background">#222222</color>
+    <color name="seek_bar_progress">#000000</color>
     <color name="seek_bar_secondary_progress">#3399CC</color>
+    <color name="seek_thumb">#666666</color>
+    <color name="brightness_seek_bar_background">#666666</color>
+    <color name="brightness_seek_bar_progress">#222222</color>
+    <color name="brightness_seek_bar_secondary_progress">#3399CC</color>
+    <color name="brightness_seek_thumb">#444444</color>
 </resources>
