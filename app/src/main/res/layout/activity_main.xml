@@ -23,26 +23,31 @@
             android:layout_centerVertical="true"
             android:visibility="visible"/>
 
-        <TextView android:id="@+id/textView"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:textColor="#555555"
-            android:layout_alignTop="@+id/backgroundView"/>
-
         <Button android:id="@+id/menuButton"
-            android:text="MENU"
             android:onClick="onClickMenu"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
+            android:layout_width="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true" />
+
+        <jackreuter.niklite.VerticalSeekBar
+            android:id="@+id/brightnessSeekBar"
+            android:layout_marginRight="20dp"
             android:layout_width="wrap_content"
-            android:layout_alignTop="@+id/backgroundView"
-            android:layout_alignRight="@id/backgroundView"/>
+            android:layout_height="300dp"
+            android:layout_above="@id/menuButton"
+            android:layout_alignParentRight="true"
+            android:progressDrawable="@drawable/seek_bar"
+            android:thumb="@drawable/seek_thumb"
+            android:max="255"/>
 
         <FrameLayout
             android:id="@+id/menuFrame"
-            android:layout_below="@+id/textView"
             android:layout_centerHorizontal="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_centerVertical="true"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="100dp">
         </FrameLayout>
 
     </RelativeLayout>
