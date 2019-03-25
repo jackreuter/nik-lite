@@ -11,24 +11,30 @@
         android:layout_height="match_parent"
         android:background="#80888888"/>
 
+    <ImageView
+        android:id="@+id/openImageView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="10dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/ic_baseline_folder_open_24px"/>
+
+    <ImageView
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/openImageView"
+        android:layout_margin="10dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/ic_baseline_save_24px" />
+
     <TextView
         android:id="@+id/kelvinText"
         android:fontFamily="sans-serif-medium"
         android:text="KELVIN:"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="15dp"
         android:textColor="#000000"
         android:layout_toLeftOf="@+id/kelvinButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/lockText"
-        android:fontFamily="sans-serif-medium"
-        android:text="LOCK:"
-        android:layout_marginTop="20dp"
-        android:textColor="#000000"
-        android:layout_toLeftOf="@+id/lockButton"
-        android:layout_below="@id/kelvinButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -36,10 +42,10 @@
         android:id="@+id/shapeText"
         android:fontFamily="sans-serif-medium"
         android:text="CIRCLE:"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         android:textColor="#000000"
         android:layout_toLeftOf="@+id/shapeButton"
-        android:layout_below="@id/lockButton"
+        android:layout_below="@id/kelvinButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -47,7 +53,7 @@
         android:id="@+id/strobeText"
         android:fontFamily="sans-serif-medium"
         android:text="STROBE:"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         android:textColor="#000000"
         android:layout_toLeftOf="@+id/strobeButton"
         android:layout_below="@id/shapeButton"
@@ -58,46 +64,39 @@
         android:id="@+id/kelvinButton"
         android:textOff=""
         android:textOn=""
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:layout_centerHorizontal="true"
-        android:background="@layout/toggle_button_background"/>
-
-    <ToggleButton
-        android:id="@+id/lockButton"
-        android:textOff=""
-        android:textOn=""
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:layout_below="@+id/kelvinButton"
-        android:layout_centerHorizontal="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentRight="true"
         android:background="@layout/toggle_button_background"/>
 
     <ToggleButton
         android:id="@+id/shapeButton"
         android:textOff=""
         android:textOn=""
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:layout_below="@id/lockButton"
-        android:layout_centerHorizontal="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentRight="true"
         android:background="@layout/toggle_button_background"/>
 
     <ToggleButton
         android:id="@+id/strobeButton"
         android:textOff=""
         android:textOn=""
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:layout_below="@+id/shapeButton"
-        android:layout_centerHorizontal="true"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentRight="true"
         android:background="@layout/toggle_button_background"/>
 
     <TextView
         android:fontFamily="sans-serif-medium"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="15dp"
         android:textColor="#000000"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -105,7 +104,8 @@
         android:layout_below="@id/strobeButton"/>
 
     <SeekBar
-        android:layout_margin="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:id="@+id/lightDurationSeekBar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -120,7 +120,7 @@
         android:fontFamily="sans-serif-medium"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="15dp"
         android:textColor="#000000"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -128,7 +128,8 @@
         android:layout_below="@id/lightDurationSeekBar"/>
 
     <SeekBar
-        android:layout_margin="5dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="5dp"
         android:id="@+id/darkDurationSeekBar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -167,7 +168,7 @@
         android:fontFamily="sans-serif-medium"
         android:textColor="#000000"
         android:layout_marginTop="5dp"
-        android:layout_marginRight="30dp"
+        android:layout_marginRight="28dp"
         android:layout_marginBottom="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -189,7 +190,7 @@
         android:fontFamily="sans-serif-medium"
         android:textColor="#000000"
         android:layout_marginTop="5dp"
-        android:layout_marginLeft="30dp"
+        android:layout_marginLeft="28dp"
         android:layout_marginBottom="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -199,7 +200,7 @@
     <jackreuter.niklite.VerticalSeekBar
         android:id="@+id/redSeekBar"
         android:layout_marginRight="50dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="70dp"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_below="@id/redValueTextView"
@@ -210,7 +211,7 @@
 
     <jackreuter.niklite.VerticalSeekBar
         android:id="@+id/greenSeekBar"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="70dp"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_below="@id/greenValueTextView"
@@ -222,7 +223,7 @@
     <jackreuter.niklite.VerticalSeekBar
         android:id="@+id/blueSeekBar"
         android:layout_marginLeft="50dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="70dp"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_below="@id/blueValueTextView"
@@ -238,7 +239,18 @@
         android:textColor="#000000"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/lockButton"
         android:layout_centerHorizontal="true"/>
+
+    <ToggleButton
+        android:id="@+id/lockButton"
+        android:textOff=""
+        android:textOn=""
+        android:layout_marginBottom="10dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@layout/lock_button_background"/>
 
 </RelativeLayout>

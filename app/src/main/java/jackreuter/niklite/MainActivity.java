@@ -19,10 +19,12 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 
 public class MainActivity extends Activity implements MenuFragment.MenuListener {
@@ -30,8 +32,8 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
     View colorView;
     Button menuButton;
     VerticalSeekBar brightnessBar;
-    FrameLayout menuFrame;
 
+    FrameLayout menuFrame;
     MenuFragment menuFragment;
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
@@ -86,6 +88,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
         menuButton = (Button) findViewById(R.id.menuButton);
         menuButton.setBackgroundResource(R.drawable.ic_baseline_menu_24px);
         menuFrame = (FrameLayout) findViewById(R.id.menuFrame);
+
         brightnessBar = (VerticalSeekBar) findViewById(R.id.brightnessSeekBar);
         try {
             brightness = Settings.System.getInt(this.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
@@ -114,6 +117,11 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
         mdisp.getSize(mdispSize);
         maxX = mdispSize.x;
         maxY = mdispSize.y;
+
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) menuFrame.getLayoutParams();
+        params.setMargins((int) maxX/10, (int) maxY/10, (int) maxX/10, (int) maxY/10);
+        menuFrame.setLayoutParams(params);
+
         shapeSize = maxX;
         if (maxY < maxX) { shapeSize = maxY; }
         shapeSize = shapeSize - BUFFER_SIZE;

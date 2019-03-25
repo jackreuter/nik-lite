@@ -15,7 +15,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import org.w3c.dom.Text;
 
 
@@ -182,7 +181,7 @@ public class MenuFragment extends Fragment {
         });
 
         darkDurationTextView = (TextView) view.findViewById(R.id.darkDurationTextView);
-        darkDurationTextView.setText(String.format("DARK:  %.1fs", darkDuration/1000.0));
+        darkDurationTextView.setText(String.format("DARK: %.1fs ", darkDuration/1000.0));
         darkDurationSeekBar = (SeekBar) view.findViewById(R.id.darkDurationSeekBar);
         darkDurationSeekBar.setProgress(darkDuration);
         // perform seek bar change listener event used for getting the slider value
@@ -191,7 +190,7 @@ public class MenuFragment extends Fragment {
 
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
                 sliderValue = value;
-                darkDurationTextView.setText(String.format("DARK:  %.1fs", sliderValue/1000.0));
+                darkDurationTextView.setText(String.format("DARK: %.1fs ", sliderValue/1000.0));
                 darkDurationSeekBarChanged(sliderValue);
             }
 
