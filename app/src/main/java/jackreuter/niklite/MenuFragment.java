@@ -1,16 +1,20 @@
 package jackreuter.niklite;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.icu.text.UnicodeSetSpanner;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,9 +24,11 @@ import org.w3c.dom.Text;
 
 public class MenuFragment extends Fragment {
 
+    final int NUMBER_OF_SHAPES = 4;
+
     boolean kelvinMode;
     boolean lockMode;
-    boolean shapeMode;
+    int shapeIndex;
     boolean strobeMode;
     int lightDuration;
     int darkDuration;
@@ -32,36 +38,33 @@ public class MenuFragment extends Fragment {
     int temperature;
     MenuListener activityCallback;
 
-    ToggleButton kelvinButton;
-    ToggleButton lockButton;
-    ToggleButton shapeButton;
-    ToggleButton strobeButton;
-    TextView lightDurationTextView;
-    TextView darkDurationTextView;
-    SeekBar lightDurationSeekBar;
-    SeekBar darkDurationSeekBar;
-    TextView colorNameTextView;
-    TextView redValueTextView;
-    TextView greenValueTextView;
-    TextView blueValueTextView;
-    TextView kelvinTextView;
-    VerticalSeekBar redValueSeekBar;
-    VerticalSeekBar greenValueSeekBar;
-    VerticalSeekBar blueValueSeekBar;
-    VerticalSeekBar kelvinSeekBar;
+    Button openButton, saveButton;
+    ToggleButton kelvinButton, lockButton, strobeButton;
+    Button fullscreenButton, circleButton, starButton, heartButton, plusButton;
+    ImageView fullscreenSelectedImageView, circleSelectedImageView, starSelectedImageView, heartSelectedImageView, plusSelectedImageView;
+    TextView lightDurationTextView, darkDurationTextView;
+    SeekBar lightDurationSeekBar, darkDurationSeekBar;
+    TextView colorNameTextView, redValueTextView, greenValueTextView, blueValueTextView, kelvinTextView;
+    VerticalSeekBar redValueSeekBar, greenValueSeekBar, blueValueSeekBar, kelvinSeekBar;
 
     public interface MenuListener {
+        public void onSaveButtonClick();
+        public void onOpenButtonClick();
         public void onKelvinButtonClick();
         public void onLockButtonClick();
-        public void onShapeButtonClick();
+        public void onFullscreenButtonClick();
+        public void onCircleButtonClick();
+        public void onStarButtonClick();
+        public void onHeartButtonClick();
+        public void onPlusButtonClick();
         public void onStrobeButtonClick();
-        public void onClose();
         public void onLightDurationSeekBarChanged(int seekBarValue);
         public void onDarkDurationSeekBarChanged(int seekBarValue);
         public void onRedSeekBarChanged(int seekBarValue);
         public void onGreenSeekBarChanged(int seekBarValue);
         public void onBlueSeekBarChanged(int seekBarValue);
         public void onKelvinSeekBarChanged(int seekBarValue);
+
     }
 
     public MenuFragment() {
@@ -70,7 +73,7 @@ public class MenuFragment extends Fragment {
 
     public static MenuFragment newInstance(boolean kelvin,
                                            boolean lock,
-                                           boolean shape,
+                                           int shape,
                                            boolean strobe,
                                            int lightDuration,
                                            int darkDuration,
@@ -83,7 +86,7 @@ public class MenuFragment extends Fragment {
         Bundle bundle = new Bundle();
         bundle.putBoolean("kelvin", kelvin);
         bundle.putBoolean("lock", lock);
-        bundle.putBoolean("shape", shape);
+        bundle.putInt("shapeIndex", shape);
         bundle.putBoolean("strobe", strobe);
         bundle.putInt("lightDuration", lightDuration);
         bundle.putInt("darkDuration", darkDuration);
@@ -102,7 +105,7 @@ public class MenuFragment extends Fragment {
         if (bundle != null) {
             kelvinMode = bundle.getBoolean("kelvin");
             lockMode = bundle.getBoolean("lock");
-            shapeMode = bundle.getBoolean("shape");
+            shapeIndex = bundle.getInt("shapeIndex");
             strobeMode = bundle.getBoolean("strobe");
             lightDuration = bundle.getInt("lightDuration");
             darkDuration = bundle.getInt("darkDuration");
@@ -116,6 +119,7 @@ public class MenuFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_menu, container, false);
         readBundle(getArguments());
@@ -124,6 +128,20 @@ public class MenuFragment extends Fragment {
         backgroundView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 backgroundViewClicked(v);
+            }
+        });
+
+        openButton = (Button) view.findViewById(R.id.openButton);
+        openButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                openButtonClicked(v);
+            }
+        });
+
+        saveButton = (Button) view.findViewById(R.id.saveButton);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                saveButtonClicked(v);
             }
         });
 
@@ -141,10 +159,44 @@ public class MenuFragment extends Fragment {
             }
         });
 
-        shapeButton = (ToggleButton) view.findViewById(R.id.shapeButton);
-        shapeButton.setOnClickListener(new View.OnClickListener() {
+        //create shape selection buttons and selection outline images
+        fullscreenSelectedImageView = (ImageView) view.findViewById(R.id.fullScreenSelected);
+        circleSelectedImageView = (ImageView) view.findViewById(R.id.circleSelected);
+        starSelectedImageView = (ImageView) view.findViewById(R.id.starSelected);
+        heartSelectedImageView = (ImageView) view.findViewById(R.id.heartSelected);
+        plusSelectedImageView = (ImageView) view.findViewById(R.id.plusSelected);
+
+        fullscreenButton = (Button) view.findViewById(R.id.fullScreenButton);
+        circleButton = (Button) view.findViewById(R.id.circleButton);
+        starButton = (Button) view.findViewById(R.id.starButton);
+        heartButton = (Button) view.findViewById(R.id.heartButton);
+        plusButton = (Button) view.findViewById(R.id.plusButton);
+
+        setShapeSelectorImage();
+
+        fullscreenButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                shapeButtonClicked(v);
+                fullscreenButtonClicked(v);
+            }
+        });
+        circleButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                circleButtonClicked(v);
+            }
+        });
+        starButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                starButtonClicked(v);
+            }
+        });
+        heartButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                heartButtonClicked(v);
+            }
+        });
+        plusButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                plusButtonClicked(v);
             }
         });
 
@@ -157,7 +209,6 @@ public class MenuFragment extends Fragment {
 
         kelvinButton.setChecked(kelvinMode);
         lockButton.setChecked(lockMode);
-        shapeButton.setChecked(shapeMode);
         strobeButton.setChecked(strobeMode);
 
         /** set up SeekBar's for strobe settings */
@@ -480,34 +531,84 @@ public class MenuFragment extends Fragment {
     /** prevents menu from being closed when background of menu is clicked */
     public void backgroundViewClicked(View view) { }
 
+    /** open dialog menu to select user saved settings */
+    public void openButtonClicked(View view) {
+        activityCallback.onOpenButtonClick();
+    }
+
+    /** save current settings as preset, prompt user to enter name */
+    public void saveButtonClicked(View view) {
+        activityCallback.onSaveButtonClick();
+    }
+
     /** toggle kelvin mode */
     public void kelvinButtonClicked(View view) {
         kelvinMode = !kelvinMode;
         toggleKelvinModeUI(kelvinMode);
         String color = getColorName();
         colorNameTextView.setText(color);
-        final Button kelvinButton = (Button) view.findViewById(R.id.kelvinButton);
         activityCallback.onKelvinButtonClick();
     }
 
     /**  toggle lock mode */
     public void lockButtonClicked(View view) {
         lockMode = !lockMode;
-        final Button lockButton = (Button) view.findViewById(R.id.lockButton);
         activityCallback.onLockButtonClick();
     }
 
-    /** toggle shape mode */
-    public void shapeButtonClicked(View view) {
-        shapeMode = !shapeMode;
-        final Button shapeButton = (Button) view.findViewById(R.id.shapeButton);
-        activityCallback.onShapeButtonClick();
+    /** set fullscreen mode */
+    public void fullscreenButtonClicked(View view) {
+        shapeIndex = MainActivity.FULLSCREEN_INDEX;
+        setShapeSelectorImage();
+        activityCallback.onFullscreenButtonClick();
+    }
+
+    /** set circle mode */
+    public void circleButtonClicked(View view) {
+        shapeIndex = MainActivity.CIRCLE_INDEX;
+        setShapeSelectorImage();
+        activityCallback.onCircleButtonClick();
+    }
+
+    /** set star mode */
+    public void starButtonClicked(View view) {
+        shapeIndex = MainActivity.STAR_INDEX;
+        setShapeSelectorImage();
+        activityCallback.onStarButtonClick();
+    }
+
+    /** set heart mode */
+    public void heartButtonClicked(View view) {
+        shapeIndex = MainActivity.HEART_INDEX;
+        setShapeSelectorImage();
+        activityCallback.onHeartButtonClick();
+    }
+
+    /** set plus mode */
+    public void plusButtonClicked(View view) {
+        shapeIndex = MainActivity.PLUS_INDEX;
+        setShapeSelectorImage();
+        activityCallback.onPlusButtonClick();
+    }
+
+    /** set shape selector image */
+    public void setShapeSelectorImage() {
+        fullscreenSelectedImageView.setVisibility(View.INVISIBLE);
+        circleSelectedImageView.setVisibility(View.INVISIBLE);
+        starSelectedImageView.setVisibility(View.INVISIBLE);
+        heartSelectedImageView.setVisibility(View.INVISIBLE);
+        plusSelectedImageView.setVisibility(View.INVISIBLE);
+
+        if (shapeIndex == MainActivity.FULLSCREEN_INDEX) { fullscreenSelectedImageView.setVisibility(View.VISIBLE); }
+        if (shapeIndex == MainActivity.CIRCLE_INDEX) { circleSelectedImageView.setVisibility(View.VISIBLE); }
+        if (shapeIndex == MainActivity.STAR_INDEX) { starSelectedImageView.setVisibility(View.VISIBLE); }
+        if (shapeIndex == MainActivity.HEART_INDEX) { heartSelectedImageView.setVisibility(View.VISIBLE); }
+        if (shapeIndex == MainActivity.PLUS_INDEX) { plusSelectedImageView.setVisibility(View.VISIBLE); }
     }
 
     /** toggle strobe mode */
     public void strobeButtonClicked(View view) {
         strobeMode = !strobeMode;
-        final Button strobeButton = (Button) view.findViewById(R.id.strobeButton);
         activityCallback.onStrobeButtonClick();
     }
 
@@ -540,9 +641,6 @@ public class MenuFragment extends Fragment {
     public void kelvinSeekBarChanged(int value) {
         activityCallback.onKelvinSeekBarChanged(value);
     }
-
-    /** close menu fragment */
-    public void close() { activityCallback.onClose(); }
 
     @Override
     public void onAttach(Activity activity) {

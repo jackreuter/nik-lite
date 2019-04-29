@@ -1,21 +1,22 @@
 package jackreuter.niklite;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.Handler;
 import android.provider.Settings;
-import android.support.v4.content.res.ResourcesCompat;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
@@ -23,18 +24,27 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
-public class MainActivity extends Activity implements MenuFragment.MenuListener {
+import com.google.gson.Gson;
 
-    View colorView;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
+
+public class MainActivity extends Activity implements MenuFragment.MenuListener, FileListFragment.OnListFragmentInteractionListener {
+
+    ImageView colorView;
     Button menuButton;
     VerticalSeekBar brightnessBar;
 
     FrameLayout menuFrame;
     MenuFragment menuFragment;
+    FileListFragment fileListFragment;
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
 
@@ -49,26 +59,52 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
     int globalColorInt;
     int rgbColorInt;
     int temperature;
-    float maxX;
-    float maxY;
-    float shapeSize;
     int lightDuration;
     int darkDuration;
+    float shapeSize;
+
+    float maxX;
+    float maxY;
     Display mdisp;
     Point mdispSize;
 
-    boolean kelvinMode;
-    boolean lockMode;
-    boolean shapeMode;
-    boolean strobeMode;
-    boolean isDark;
-    boolean menuEnabled;
+    boolean kelvinMode, lockMode, strobeMode, isDark, menuEnabled, fileListEnabled;
 
     int [] shapeIDs;
     int currentShapeIndex;
 
+    public static final int FULLSCREEN_INDEX = 0;
+    public static final int CIRCLE_INDEX = 1;
+    public static final int STAR_INDEX = 2;
+    public static final int HEART_INDEX = 3;
+    public static final int PLUS_INDEX = 4;
+    public static final int MIN_SHAPE_HEIGHT = 100;
+    public static final int MIN_SHAPE_WIDTH = 100;
+
     private ScaleGestureDetector scaleDetector;
     private int brightness;
+
+    /** save state in case screen is rotated */
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        savedInstanceState.putInt("globalColorInt", globalColorInt);
+        savedInstanceState.putInt("rgbColorInt", rgbColorInt);
+        savedInstanceState.putInt("temperature", temperature);
+        savedInstanceState.putInt("lightDuration", lightDuration);
+        savedInstanceState.putInt("darkDuration", darkDuration);
+        savedInstanceState.putFloat("shapeSize", shapeSize);
+        savedInstanceState.putInt("shapeIndex", currentShapeIndex);
+
+        savedInstanceState.putBoolean("kelvinMode", kelvinMode);
+        savedInstanceState.putBoolean("lockMode", lockMode);
+        savedInstanceState.putBoolean("strobeMode", strobeMode);
+
+        savedInstanceState.putBoolean("menuEnabled", menuEnabled);
+        savedInstanceState.putBoolean("fileListEnabled", fileListEnabled);
+
+        //declare values before saving the state
+        super.onSaveInstanceState(savedInstanceState);
+    }
 
     /** Set up fullscreen, get display size and create views */
     @Override
@@ -84,7 +120,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
         //set content view AFTER ABOVE sequence (to avoid crash)
         this.setContentView(R.layout.activity_main);
 
-        colorView = findViewById(R.id.colorView);
+        colorView = (ImageView) findViewById(R.id.colorView);
         menuButton = (Button) findViewById(R.id.menuButton);
         menuButton.setBackgroundResource(R.drawable.ic_baseline_menu_24px);
         menuFrame = (FrameLayout) findViewById(R.id.menuFrame);
@@ -98,40 +134,17 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
         brightnessBar.setProgress(brightness);
 
         fragmentManager = getFragmentManager();
-
         setUIEnabled(false);
-        kelvinMode = false;
-        lockMode = false;
-        strobeMode = false;
-        isDark = false;
-        menuEnabled = false;
-
-        shapeIDs = new int[]{
-                R.drawable.circle,
-                R.drawable.ring,
-        };
-        currentShapeIndex = 0; //default to circle
-
         mdisp = getWindowManager().getDefaultDisplay();
         mdispSize = new Point();
         mdisp.getSize(mdispSize);
         maxX = mdispSize.x;
         maxY = mdispSize.y;
 
+        // set up menu frame
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) menuFrame.getLayoutParams();
         params.setMargins((int) maxX/10, (int) maxY/10, (int) maxX/10, (int) maxY/10);
         menuFrame.setLayoutParams(params);
-
-        shapeSize = maxX;
-        if (maxY < maxX) { shapeSize = maxY; }
-        shapeSize = shapeSize - BUFFER_SIZE;
-
-        lightDuration = 500; //default strobe .5 second light
-        darkDuration = 1000; //default strobe 1 second dark
-
-        rgbColorInt = Color.WHITE; //default color WHITE
-        temperature = 1000; //default temperature 1000K
-        colorView.setBackgroundColor(rgbColorInt);
 
         scaleDetector = new ScaleGestureDetector(this, new ScaleListener());
         uiHandler = new Handler();
@@ -168,6 +181,58 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
                 }, FADE_TIME);
             }
         });
+
+        //check for saved instance state e.g. if screen rotated
+        if (savedInstanceState != null){
+            globalColorInt = savedInstanceState.getInt("globalColorInt");
+            rgbColorInt = savedInstanceState.getInt("rgbColorInt");
+            temperature = savedInstanceState.getInt("temperature");
+            lightDuration = savedInstanceState.getInt("lightDuration");
+            darkDuration = savedInstanceState.getInt("darkDuration");
+            shapeSize = savedInstanceState.getFloat("shapeSize");
+            currentShapeIndex = savedInstanceState.getInt("shapeIndex");
+
+            kelvinMode = savedInstanceState.getBoolean("kelvinMode");
+            lockMode = savedInstanceState.getBoolean("lockMode");
+            strobeMode = savedInstanceState.getBoolean("strobeMode");
+
+            menuEnabled = savedInstanceState.getBoolean("menuEnabled");
+            fileListEnabled = savedInstanceState.getBoolean("fileListEnabled");
+        } else {
+            globalColorInt = Color.WHITE; //default color WHITE
+            rgbColorInt = Color.WHITE; //default color WHITE
+            temperature = 1500; //default temperature 1500K
+            lightDuration = 500; //default strobe .5 second light
+            darkDuration = 1000; //default strobe 1 second dark
+
+            //default shape size smaller of height or width, minus buffer
+            shapeSize = maxX;
+            if (maxY < maxX) { shapeSize = maxY; }
+            shapeSize = shapeSize - BUFFER_SIZE;
+            currentShapeIndex = 0; //default to circle
+
+            kelvinMode = false;
+            lockMode = false;
+            strobeMode = false;
+
+            menuEnabled = false;
+            fileListEnabled = false;
+        }
+
+        isDark = false;
+        shapeIDs = new int[]{
+                R.drawable.square_selected,
+                R.drawable.circle_24px,
+                R.drawable.star_24px,
+                R.drawable.heart__24px,
+                R.drawable.plus_24px,
+        };
+
+        if (currentShapeIndex > 0) {
+            colorView.setBackgroundColor(Color.BLACK);
+            colorView.setImageResource(shapeIDs[currentShapeIndex]);
+        }
+        colorBackground();
     }
 
     /** Check whether this app has android write settings permission */
@@ -221,8 +286,13 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (menuEnabled) {
-            menuFragment.close();
+            killMenuFragment();
         }
+
+        if (fileListEnabled) {
+            killFileListFragment();
+        }
+
         scaleDetector.onTouchEvent(event);
 
         //enable and disable UI
@@ -266,42 +336,23 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
     /** creates background from global color int value */
     public void colorBackground() {
         //if shape mode enabled create the desired shape
-        if (shapeMode) {
-            drawShape(shapeIDs[currentShapeIndex], globalColorInt);
+        if (currentShapeIndex > 0) {
+            colorView.setColorFilter(globalColorInt);
         } else {
             colorView.setBackgroundColor(globalColorInt);
+            colorView.setColorFilter(globalColorInt);
         }
-    }
-
-    /** draws shape to colorView view */
-    public void drawShape(int shapeId, int color) {
-
-        Drawable colorShape = ResourcesCompat.getDrawable(getResources(), shapeId, null);
-        if (colorShape instanceof ShapeDrawable) {
-            // cast to 'ShapeDrawable'
-            ShapeDrawable shapeDrawable = (ShapeDrawable) colorShape;
-            shapeDrawable.getPaint().setColor(color);
-        } else if (colorShape instanceof GradientDrawable) {
-            // cast to 'GradientDrawable'
-            GradientDrawable gradientDrawable = (GradientDrawable) colorShape;
-            gradientDrawable.setColor(color);
-        } else if (colorShape instanceof ColorDrawable) {
-            // alpha value may need to be set again after this call
-            ColorDrawable colorDrawable = (ColorDrawable) colorShape;
-            colorDrawable.setColor(color);
-        }
-        colorView.setBackgroundDrawable(colorShape);
     }
 
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            if (shapeMode) {
+            if (currentShapeIndex > 0) {
                 float tmpSize = shapeSize * detector.getScaleFactor();
 
                 // Don't let the object get too small or too large.
-                if (tmpSize <= 100) {
-                    tmpSize = 100;
+                if (tmpSize <= MIN_SHAPE_HEIGHT) {
+                    tmpSize = MIN_SHAPE_WIDTH;
                 }
 
                 if (tmpSize >= maxX) {
@@ -327,7 +378,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
         menuFragment = MenuFragment.newInstance(
                 kelvinMode,
                 lockMode,
-                shapeMode,
+                currentShapeIndex,
                 strobeMode,
                 lightDuration,
                 darkDuration,
@@ -336,8 +387,8 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
                 Color.blue(rgbColorInt),
                 temperature
         );
-        fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.menuFrame, menuFragment);
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.menuFrame, menuFragment, "menuFragment");
         fragmentTransaction.commit();
         menuEnabled = true;
     }
@@ -529,6 +580,118 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
     }
 
     @Override
+    public void onOpenButtonClick () {
+        SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+        Map<String, ?> allEntries = sharedPref.getAll();
+        ArrayList<String> filenames = new ArrayList<String>();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            filenames.add(entry.getKey());
+        }
+        Collections.sort(filenames);
+        fileListEnabled = true;
+        menuEnabled = false;
+        fileListFragment = FileListFragment.newInstance(filenames);
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.menuFrame, fileListFragment, "fileListFragment");
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    public void onSaveButtonClick() {
+        // get save_prompt.xml view
+        LayoutInflater li = LayoutInflater.from(MainActivity.this);
+        View savePromptView = li.inflate(R.layout.save_prompt, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                MainActivity.this);
+
+        // set save_prompt.xml to alertdialog builder
+        alertDialogBuilder.setView(savePromptView);
+
+        final EditText userInput = (EditText) savePromptView.findViewById(R.id.editTextDialogUserInput);
+
+        // set dialog message
+        alertDialogBuilder
+                //.setCancelable(false)
+                .setPositiveButton("Save",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                // data validation occurs in CustomListener class
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+
+        // custom listener to validate user input
+        class CustomListener implements View.OnClickListener {
+            private final Dialog dialog;
+            public CustomListener(Dialog dialog) {
+                this.dialog = dialog;
+            }
+            @Override
+            public void onClick(View v) {
+                String input = userInput.getText().toString();
+
+                // user input validation
+                // filename cannot be blank
+                if (input.equals("")) {
+                    Toast.makeText(MainActivity.this, "Must enter filename", Toast.LENGTH_SHORT).show();
+                } else {
+                    SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+                    Map<String, ?> allEntries = sharedPref.getAll();
+                    Boolean duplicateFound = false;
+                    for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+                        if (entry.getKey().equals(input)) {
+                            duplicateFound = true;
+                            break;
+                        }
+                    }
+
+                    // filename must be unique
+                    if (duplicateFound) {
+                        Toast.makeText(MainActivity.this, "Filename already exists", Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        SettingsItem currentSettings = new SettingsItem(
+                                input,
+                                globalColorInt,
+                                rgbColorInt,
+                                temperature,
+                                lightDuration,
+                                darkDuration,
+                                shapeSize,
+                                currentShapeIndex,
+                                kelvinMode,
+                                true,
+                                strobeMode
+                        );
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        Gson gson = new Gson();
+                        String json = gson.toJson(currentSettings);
+                        editor.putString(input, json);
+                        editor.commit();
+                        dialog.dismiss();
+                        Toast.makeText(MainActivity.this, "Preset saved", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }
+
+        Button confirmSaveButton = alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        confirmSaveButton.setOnClickListener(new CustomListener(alertDialog));
+    }
+
+    @Override
     public void onKelvinButtonClick() {
         kelvinMode = !kelvinMode;
         if (kelvinMode) {
@@ -545,21 +708,56 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
     }
 
     @Override
-    public void onShapeButtonClick() {
-        shapeMode = !shapeMode;
-
-        if (shapeMode) {
-            colorView.requestLayout();
-            colorView.getLayoutParams().height = (int) (shapeSize);
-            colorView.getLayoutParams().width = (int) (shapeSize);
-
-        } else {
-            colorView.requestLayout();
-            colorView.getLayoutParams().height = (int) (maxY);
-            colorView.getLayoutParams().width = (int) (maxX);
-        }
+    public void onFullscreenButtonClick() {
+        currentShapeIndex = FULLSCREEN_INDEX;
+        colorView.requestLayout();
+        colorView.getLayoutParams().height = (int) (maxY);
+        colorView.getLayoutParams().width = (int) (maxX);
         colorBackground();
+    }
 
+    @Override
+    public void onCircleButtonClick() {
+        currentShapeIndex = CIRCLE_INDEX;
+        colorView.requestLayout();
+        colorView.getLayoutParams().height = (int) (shapeSize);
+        colorView.getLayoutParams().width = (int) (shapeSize);
+        colorView.setBackgroundColor(Color.BLACK);
+        colorView.setImageResource(shapeIDs[currentShapeIndex]);
+        colorBackground();
+    }
+
+    @Override
+    public void onStarButtonClick() {
+        currentShapeIndex = STAR_INDEX;
+        colorView.requestLayout();
+        colorView.getLayoutParams().height = (int) (shapeSize);
+        colorView.getLayoutParams().width = (int) (shapeSize);
+        colorView.setBackgroundColor(Color.BLACK);
+        colorView.setImageResource(shapeIDs[currentShapeIndex]);
+        colorBackground();
+    }
+
+    @Override
+    public void onHeartButtonClick() {
+        currentShapeIndex = HEART_INDEX;
+        colorView.requestLayout();
+        colorView.getLayoutParams().height = (int) (shapeSize);
+        colorView.getLayoutParams().width = (int) (shapeSize);
+        colorView.setBackgroundColor(Color.BLACK);
+        colorView.setImageResource(shapeIDs[currentShapeIndex]);
+        colorBackground();
+    }
+
+    @Override
+    public void onPlusButtonClick() {
+        currentShapeIndex = PLUS_INDEX;
+        colorView.requestLayout();
+        colorView.getLayoutParams().height = (int) (shapeSize);
+        colorView.getLayoutParams().width = (int) (shapeSize);
+        colorView.setBackgroundColor(Color.BLACK);
+        colorView.setImageResource(shapeIDs[currentShapeIndex]);
+        colorBackground();
     }
 
     @Override
@@ -617,6 +815,93 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
         colorBackground();
     }
 
+    /** delete the selected save file */
+    @Override
+    public void onDeleteButtonClicked(final String item) {
+        // get delete_prompt.xml view
+        LayoutInflater li = LayoutInflater.from(MainActivity.this);
+        View deletePromptView = li.inflate(R.layout.delete_prompt, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                MainActivity.this);
+
+        // set save_prompt.xml to alertdialog builder
+        alertDialogBuilder.setView(deletePromptView);
+
+        // set dialog message
+        alertDialogBuilder
+                //.setCancelable(false)
+                .setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPref.edit();
+                                editor.remove(item);
+                                editor.commit();
+                                killFileListFragment();
+                                onOpenButtonClick();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
+
+    /** open selected save file */
+    @Override
+    public void onItemClicked(String item) {
+        Log.d("yoo", item);
+        SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
+        Boolean strobeWasRunning = strobeMode;
+
+        Gson gson = new Gson();
+        String json = sharedPref.getString(item, "");
+        SettingsItem settings = gson.fromJson(json, SettingsItem.class);
+        globalColorInt = settings.getGlobalColorInt();
+        rgbColorInt = settings.getRgbColorInt();
+        temperature = settings.getTemperature();
+        lightDuration = settings.getLightDuration();
+        darkDuration = settings.getDarkDuration();
+        shapeSize = settings.getShapeSize();
+        currentShapeIndex = settings.getShapeIndex();
+        kelvinMode = settings.getKelvinMode();
+        lockMode = settings.getLockMode();
+        strobeMode = settings.getStrobeMode();
+
+        if (strobeMode) {
+            startStrobe();
+        } else {
+            if (strobeWasRunning) {
+                stopStrobe();
+            }
+        }
+
+        if (currentShapeIndex > 0) {
+            colorView.setBackgroundColor(Color.BLACK);
+            colorView.requestLayout();
+            colorView.getLayoutParams().height = (int) (shapeSize);
+            colorView.getLayoutParams().width = (int) (shapeSize);
+            colorView.setImageResource(shapeIDs[currentShapeIndex]);
+        } else {
+            colorView.requestLayout();
+            colorView.getLayoutParams().height = (int) (maxY);
+            colorView.getLayoutParams().width = (int) (maxX);
+        }
+
+        colorBackground();
+        killFileListFragment();
+    }
+
+
     /** define strobe light method */
     Runnable runStrobe = new Runnable() {
         @Override
@@ -625,7 +910,12 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
                 if (isDark) {
                     colorBackground();
                 } else {
-                    colorView.setBackgroundColor(Color.rgb(0, 0, 0));
+                    if (currentShapeIndex > 0) {
+                        colorView.setColorFilter(Color.BLACK);
+                    } else {
+                        colorView.setBackgroundColor(Color.BLACK);
+                        colorView.setColorFilter(Color.BLACK);
+                    }
                 }
              } finally {
                 // 100% guarantee that this always happens, even if
@@ -640,21 +930,54 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener 
         }
     };
 
+    /** called when activity starts */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (strobeMode) {
+            startStrobe();
+        }
+    }
+
+    /** called when activity stops */
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (strobeMode) {
+            stopStrobe();
+        }
+    }
+
     /** start strobe */
-    void startStrobe() {
+    public void startStrobe() {
+        strobeHandler = new Handler();
         runStrobe.run();
     }
 
     /** stop strobe */
-    void stopStrobe() {
+    public void stopStrobe() {
         strobeHandler.removeCallbacks(runStrobe);
     }
 
-    @Override
-    public void onClose() {
-        //kill menu fragment
-        fragmentTransaction = getFragmentManager().beginTransaction();
+    /** close menu fragment */
+    public void killMenuFragment() {
+        menuEnabled = false;
+        if (menuFragment == null) {
+            menuFragment = (MenuFragment) fragmentManager.findFragmentByTag("menuFragment");
+        }
+        fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.remove(menuFragment);
+        fragmentTransaction.commit();
+    }
+
+    /** close file list fragment */
+    public void killFileListFragment() {
+        fileListEnabled = false;
+        if (fileListFragment == null) {
+            fileListFragment = (FileListFragment) fragmentManager.findFragmentByTag("fileListFragment");
+        }
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.remove(fileListFragment);
         fragmentTransaction.commit();
     }
 }

@@ -9,21 +9,24 @@
         android:id="@+id/menuBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#80888888"/>
+        android:background="@color/menu_background"/>
 
-    <ImageView
-        android:id="@+id/openImageView"
+    <Button
+        android:id="@+id/openButton"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:background="@drawable/ic_baseline_folder_open_24px"/>
 
-    <ImageView
+    <Button
+        android:id="@+id/saveButton"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/openImageView"
-        android:layout_margin="10dp"
+        android:layout_toRightOf="@+id/openButton"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:background="@drawable/ic_baseline_save_24px" />
@@ -36,29 +39,8 @@
         android:textColor="#000000"
         android:layout_toLeftOf="@+id/kelvinButton"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/shapeText"
-        android:fontFamily="sans-serif-medium"
-        android:text="CIRCLE:"
-        android:layout_marginTop="5dp"
-        android:textColor="#000000"
-        android:layout_toLeftOf="@+id/shapeButton"
-        android:layout_below="@id/kelvinButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/strobeText"
-        android:fontFamily="sans-serif-medium"
-        android:text="STROBE:"
-        android:layout_marginTop="5dp"
-        android:textColor="#000000"
-        android:layout_toLeftOf="@+id/strobeButton"
-        android:layout_below="@id/shapeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_menu"/>
 
     <ToggleButton
         android:id="@+id/kelvinButton"
@@ -70,16 +52,101 @@
         android:layout_alignParentRight="true"
         android:background="@layout/toggle_button_background"/>
 
-    <ToggleButton
-        android:id="@+id/shapeButton"
-        android:textOff=""
-        android:textOn=""
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginRight="10dp"
-        android:layout_alignParentRight="true"
-        android:background="@layout/toggle_button_background"/>
+    <LinearLayout
+        android:id="@+id/shapeSelectorLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        android:layout_below="@+id/kelvinButton"
+        android:layout_centerHorizontal="true"
+        >
+
+        <ImageView
+            android:id="@+id/fullScreenSelected"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/square_selected"
+            />
+
+        <ImageView
+            android:id="@+id/circleSelected"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/square_selected"
+            />
+
+        <ImageView
+            android:id="@+id/starSelected"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/square_selected"
+            />
+
+        <ImageView
+            android:id="@+id/heartSelected"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/square_selected"
+            />
+
+        <ImageView
+            android:id="@+id/plusSelected"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/square_selected"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/shapeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        android:layout_below="@+id/kelvinButton"
+        android:layout_centerHorizontal="true"
+        >
+
+        <Button
+            android:id="@+id/fullScreenButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/fullscreen_24px"
+            />
+
+        <Button
+            android:id="@+id/circleButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/circle_24px"
+            />
+
+        <Button
+            android:id="@+id/starButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/star_24px"
+            />
+
+        <Button
+            android:id="@+id/heartButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/heart__24px"
+            />
+
+        <Button
+            android:id="@+id/plusButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/plus_24px"
+            />
+
+    </LinearLayout>
 
     <ToggleButton
         android:id="@+id/strobeButton"
@@ -87,29 +154,28 @@
         android:textOn=""
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginTop="80dp"
-        android:layout_marginRight="10dp"
-        android:layout_alignParentRight="true"
-        android:background="@layout/toggle_button_background"/>
+        android:layout_marginTop="15dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/shapeSelectorLayout"
+        android:background="@layout/toggle_button_background_vertical"/>
 
     <TextView
+        android:id="@+id/lightDurationTextView"
         android:fontFamily="sans-serif-medium"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="15dp"
+        android:layout_marginTop="15dp"
         android:textColor="#000000"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/lightDurationTextView"
-        android:layout_below="@id/strobeButton"/>
+        android:layout_below="@id/shapeSelectorLayout"
+        android:layout_toRightOf="@id/strobeButton"
+        android:textSize="@dimen/text_size_menu"/>
 
     <SeekBar
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
         android:id="@+id/lightDurationSeekBar"
+        android:layout_marginTop="15dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/strobeButton"
+        android:layout_below="@id/shapeSelectorLayout"
         android:layout_toRightOf="@+id/lightDurationTextView"
         android:max="5000"
         android:min="100"
@@ -117,20 +183,20 @@
         android:thumb="@drawable/seek_thumb"/>
 
     <TextView
+        android:id="@+id/darkDurationTextView"
         android:fontFamily="sans-serif-medium"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="15dp"
         android:textColor="#000000"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/darkDurationTextView"
-        android:layout_below="@id/lightDurationSeekBar"/>
+        android:layout_below="@id/lightDurationSeekBar"
+        android:layout_toRightOf="@+id/strobeButton"
+        android:textSize="@dimen/text_size_menu"/>
 
     <SeekBar
+        android:id="@+id/darkDurationSeekBar"
         android:layout_marginBottom="15dp"
         android:layout_marginTop="5dp"
-        android:id="@+id/darkDurationSeekBar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/lightDurationSeekBar"
@@ -148,12 +214,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/darkDurationSeekBar"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/text_size_menu"/>
 
 
     <jackreuter.niklite.VerticalSeekBar
         android:id="@+id/kelvinSeekBar"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="70dp"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_below="@id/kelvinTextView"
@@ -173,7 +240,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/greenValueTextView"
-        android:layout_below="@id/darkDurationSeekBar"/>
+        android:layout_below="@id/darkDurationSeekBar"
+        android:textSize="@dimen/text_size_menu"/>
 
     <TextView
         android:id="@+id/greenValueTextView"
@@ -183,7 +251,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/darkDurationSeekBar"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/text_size_menu"/>
 
     <TextView
         android:id="@+id/blueValueTextView"
@@ -195,7 +264,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/greenValueTextView"
-        android:layout_below="@+id/darkDurationSeekBar" />
+        android:layout_below="@+id/darkDurationSeekBar"
+        android:textSize="@dimen/text_size_menu"/>
 
     <jackreuter.niklite.VerticalSeekBar
         android:id="@+id/redSeekBar"
@@ -240,7 +310,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/lockButton"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/text_size_menu"/>
 
     <ToggleButton
         android:id="@+id/lockButton"

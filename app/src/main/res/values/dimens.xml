@@ -4,4 +4,6 @@
     <dimen name="seek_bar_thumb_size">20dp</dimen>
     <dimen name="brightness_seek_bar_thickness">4dp</dimen>
     <dimen name="brightness_seek_bar_thumb_size">20dp</dimen>
+    <dimen name="text_size_filenames">25dp</dimen>
+    <dimen name="text_size_menu">18dp</dimen>
 </resources>
