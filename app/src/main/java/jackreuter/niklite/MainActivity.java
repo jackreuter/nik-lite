@@ -413,6 +413,28 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
         menuEnabled = true;
     }
 
+    /** go back to settings menu from file list menu */
+    public void onClickBack(View view) {
+        setUIEnabled(false);
+        menuFragment = MenuFragment.newInstance(
+                kelvinMode,
+                lockMode,
+                currentShapeIndex,
+                strobeMode,
+                lightDuration,
+                darkDuration,
+                Color.red(rgbColorInt),
+                Color.green(rgbColorInt),
+                Color.blue(rgbColorInt),
+                temperature
+        );
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.menuFrame, menuFragment, "menuFragment");
+        fragmentTransaction.commit();
+        menuEnabled = true;
+        fileListEnabled = false;
+    }
+
     /** colorWheel logic for non-kelvin mode */
     public float[] getHSVfromXY(float X, float Y) {
         float midX = maxX / 2;
@@ -930,8 +952,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
                     if (currentShapeIndex > 0) {
                         colorView.setColorFilter(Color.BLACK);
                     } else {
-                        colorView.setBackgroundColor(Color.BLACK);
-                        colorView.setColorFilter(Color.BLACK);
+                        colorFrame.setBackgroundColor(Color.BLACK);
                     }
                 }
              } finally {

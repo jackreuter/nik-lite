@@ -24,6 +24,7 @@
         android:id="@+id/list"
         android:name="jackreuter.niklite.FileListFragment"
         android:layout_below="@id/header"
+        android:layout_above="@+id/backButton"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/small_margin"
@@ -31,6 +32,18 @@
         app:layoutManager="LinearLayoutManager"
         tools:context=".FileListFragment"
         tools:listitem="@layout/fragment_filelist"
+        />
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:background="@drawable/ic_baseline_keyboard_backspace_24px"
+        android:layout_marginTop="-5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/small_margin"
+        android:onClick="onClickBack"
         />
 
 </RelativeLayout>
