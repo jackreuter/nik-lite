@@ -53,10 +53,23 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
     private Handler strobeHandler;
     private Handler uiHandler;
 
-    final int FADE_TIME = 3000;
-    final int BUFFER_SIZE = 20;
-    final int TEMPERATURE_MAX = 15000;
-    final int TEMPERATURE_MIN = 1000;
+    public static final int FADE_TIME = 3000;
+    public static final int BUFFER_SIZE = 20;
+    public static final int TEMPERATURE_MAX = 15000;
+    public static final int TEMPERATURE_MIN = 1000;
+    public static final int DEFAULT_TEMPERATURE = 1500;
+    public static final int DEFAULT_LIGHT_DURATION = 500; // in milliseconds
+    public static final int DEFAULT_DARK_DURATION = 1000; // in milliseconds
+    public static final double MENU_OUTER_MARGIN_PERCENT = 0.1;
+    public static final int MAX_SHAPE_SIZE_MULTIPLIER = 15; // shape can go as big as 15x screen size
+    public static final int FULLSCREEN_INDEX = 0;
+    public static final int CIRCLE_INDEX = 1;
+    public static final int STAR_INDEX = 2;
+    public static final int HEART_INDEX = 3;
+    public static final int PLUS_INDEX = 4;
+    public static final int MIN_SHAPE_HEIGHT = 50;
+    public static final int MIN_SHAPE_WIDTH = 50;
+    public static final int MAX_SATURATION = 255;
 
     int globalColorInt;
     int rgbColorInt;
@@ -74,14 +87,6 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
 
     int [] shapeIDs;
     int currentShapeIndex;
-
-    public static final int FULLSCREEN_INDEX = 0;
-    public static final int CIRCLE_INDEX = 1;
-    public static final int STAR_INDEX = 2;
-    public static final int HEART_INDEX = 3;
-    public static final int PLUS_INDEX = 4;
-    public static final int MIN_SHAPE_HEIGHT = 100;
-    public static final int MIN_SHAPE_WIDTH = 100;
 
     private ScaleGestureDetector scaleDetector;
     private int brightness;
@@ -150,7 +155,12 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
 
         // set up menu frame
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) menuFrame.getLayoutParams();
-        params.setMargins((int) maxX/10, (int) maxY/10, (int) maxX/10, (int) maxY/10);
+        params.setMargins(
+                (int) (MENU_OUTER_MARGIN_PERCENT * maxX),
+                (int) (MENU_OUTER_MARGIN_PERCENT * maxY),
+                (int) (MENU_OUTER_MARGIN_PERCENT * maxX),
+                (int) (MENU_OUTER_MARGIN_PERCENT * maxY)
+        );
         menuFrame.setLayoutParams(params);
 
         scaleDetector = new ScaleGestureDetector(this, new ScaleListener());
@@ -158,10 +168,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
 
         // perform seek bar change listener event used for getting the progress value
         brightnessBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int sliderValue = 0;
-
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
-                sliderValue = value;
                 // Get app context object.
                 Context context = getApplicationContext();
 
@@ -208,15 +215,14 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
         } else {
             globalColorInt = Color.WHITE; //default color WHITE
             rgbColorInt = Color.WHITE; //default color WHITE
-            temperature = 1500; //default temperature 1500K
-            lightDuration = 500; //default strobe .5 second light
-            darkDuration = 1000; //default strobe 1 second dark
+            temperature = DEFAULT_TEMPERATURE; //default temperature 1500K
+            lightDuration = DEFAULT_LIGHT_DURATION; //default strobe .5 second light
+            darkDuration = DEFAULT_DARK_DURATION; //default strobe 1 second dark
 
-            //default shape size smaller of height or width, minus buffer
+            //default shape size smaller of height or width
             shapeSize = maxX;
             if (maxY < maxX) { shapeSize = maxY; }
-            shapeSize = shapeSize - BUFFER_SIZE;
-            currentShapeIndex = 0; //default to circle
+            currentShapeIndex = FULLSCREEN_INDEX;
 
             kelvinMode = false;
             lockMode = false;
@@ -235,7 +241,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
                 R.drawable.plus_24px,
         };
 
-        if (currentShapeIndex > 0) {
+        if (currentShapeIndex != FULLSCREEN_INDEX) {
             colorView.setBackgroundColor(Color.BLACK);
             colorView.setImageResource(shapeIDs[currentShapeIndex]);
         }
@@ -279,13 +285,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
         // Apply the screen brightness value to the system, this will change the value in Settings ---> Display ---> Brightness level.
         // It will also change the screen brightness for the device.
         Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, screenBrightnessValue);
-
-        /*
-        Window window = getWindow();
-        WindowManager.LayoutParams layoutParams = window.getAttributes();
-        layoutParams.screenBrightness = screenBrightnessValue / 255f;
-        window.setAttributes(layoutParams);
-        */
+        
     }
 
     /** enables or disables brightness slider and menu button */
@@ -355,7 +355,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
     /** creates background from global color int value */
     public void colorBackground() {
         //if shape mode enabled create the desired shape
-        if (currentShapeIndex > 0) {
+        if (currentShapeIndex != FULLSCREEN_INDEX) {
             colorView.setColorFilter(globalColorInt);
         } else {
             colorFrame.setBackgroundColor(globalColorInt);
@@ -365,7 +365,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            if (currentShapeIndex > 0) {
+            if (currentShapeIndex != FULLSCREEN_INDEX) {
                 float tmpSize = shapeSize * detector.getScaleFactor();
 
                 // Don't let the object get too small or too large.
@@ -373,12 +373,12 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
                     tmpSize = MIN_SHAPE_WIDTH;
                 }
 
-                if (tmpSize >= 15 * maxX) {
-                    tmpSize = 15 * maxX;
+                if (tmpSize >= MAX_SHAPE_SIZE_MULTIPLIER * maxX) {
+                    tmpSize = MAX_SHAPE_SIZE_MULTIPLIER * maxX;
                 }
 
-                if (tmpSize >= 15 * maxY) {
-                    tmpSize = 15 * maxY;
+                if (tmpSize >= MAX_SHAPE_SIZE_MULTIPLIER * maxY) {
+                    tmpSize = MAX_SHAPE_SIZE_MULTIPLIER * maxY;
                 }
 
                 shapeSize = tmpSize;
@@ -456,7 +456,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
                     yLim = BUFFER_SIZE;
                     xLim = (yLim - b) / m;
                 } else {
-                    xLim =BUFFER_SIZE;
+                    xLim = BUFFER_SIZE;
                     yLim = m * xLim + b;
                 }
             } else {
@@ -543,7 +543,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
 
     /** calculate temperature based on y value*/
     public int getTemperatureFromY(float yVal) {
-        if (yVal <= 5) {
+        if (yVal <= BUFFER_SIZE) {
             return TEMPERATURE_MAX;
         } else if (maxY - yVal <= 5) {
             return TEMPERATURE_MIN;
@@ -557,7 +557,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
      * updated to http://www.zombieprototypes.com/?p=210*/
     public int getRedValueFromTemperature(float tVal) {
         if (tVal <= 66) {
-            return 255;
+            return MAX_SATURATION;
         } else {
             //𝑎+𝑏𝑥+𝑐𝑙𝑛(𝑥)
             double a = 351.97690566805693;
@@ -567,7 +567,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
 
             double red = a + (b * x) + (c * Math.log(x));
             if (red < 0) { red = 0; }
-            if (red > 255) { red = 255; }
+            if (red > MAX_SATURATION) { red = MAX_SATURATION; }
             return (int) red;
         }
     }
@@ -593,7 +593,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
             green = a + (b * x) + (c * Math.log(x));
         }
         if (green < 0) { green = 0; }
-        if (green > 255) { green = 255; }
+        if (green > MAX_SATURATION) { green = MAX_SATURATION; }
         return (int) green;
     }
 
@@ -602,7 +602,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
      * updated to http://www.zombieprototypes.com/?p=210 */
     public int getBlueValueFromTemperature(float tVal) {
         if (tVal >= 66) {
-            return 255;
+            return MAX_SATURATION;
         } else if (tVal <= 20) {
             return 0;
         } else {
@@ -613,7 +613,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
             double x = tVal - 10;
             double blue = a + (b * x) + (c * Math.log(x));
             if (blue < 0) { blue = 0; }
-            if (blue > 255) { blue = 255; }
+            if (blue > MAX_SATURATION) { blue = MAX_SATURATION; }
             return (int) blue;
         }
     }
@@ -923,7 +923,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
         colorView.getLayoutParams().height = (int) (shapeSize);
         colorView.getLayoutParams().width = (int) (shapeSize);
 
-        if (currentShapeIndex > 0) {
+        if (currentShapeIndex != FULLSCREEN_INDEX) {
             colorFrame.setBackgroundColor(Color.BLACK);
             colorView.setImageResource(shapeIDs[currentShapeIndex]);
             colorView.setVisibility(View.VISIBLE);
@@ -943,7 +943,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
                 if (isDark) {
                     colorBackground();
                 } else {
-                    if (currentShapeIndex > 0) {
+                    if (currentShapeIndex != FULLSCREEN_INDEX) {
                         colorView.setColorFilter(Color.BLACK);
                     } else {
                         colorFrame.setBackgroundColor(Color.BLACK);

@@ -39,6 +39,26 @@ public class MenuFragment extends Fragment {
     TextView colorNameTextView, redValueTextView, greenValueTextView, blueValueTextView, kelvinTextView;
     VerticalSeekBar redValueSeekBar, greenValueSeekBar, blueValueSeekBar, kelvinSeekBar;
 
+    final double MILLISECONDS_PER_SECOND = 1000.0;
+    final int CANDLE_FLAME_LOWER = 1000;
+    final int CANDLE_FLAME_UPPER = 2000;
+    final int DOMESTIC_LIGHTING_LOWER = 2500;
+    final int DOMESTIC_LIGHTING_UPPER = 3000;
+    final int EARLY_MORNING_EVENING_LOWER = 3000;
+    final int EARLY_MORNING_EVENING_UPPER = 4000;
+    final int FLUORESCENT_LOWER = 4000;
+    final int FLUORESCENT_UPPER = 5000;
+    final int FLASH_LOWER = 5000;
+    final int FLASH_UPPER = 5500;
+    final int AVERAGE_DAYLIGHT_LOWER = 5500;
+    final int AVERAGE_DAYLIGHT_UPPER = 6500;
+    final int NOON_SUNLIGHT_LOWER = 6500;
+    final int NOON_SUNLIGHT_UPPER = 7000;
+    final int SHADE_LOWER = 7000;
+    final int SHADE_UPPER = 8000;
+    final int BLUE_SKY_LOWER = 10000;
+    final int BLUE_SKY_UPPER = 15000;
+
     public interface MenuListener {
         void onSaveButtonClick();
         void onOpenButtonClick();
@@ -206,17 +226,14 @@ public class MenuFragment extends Fragment {
 
         // set up SeekBar's for strobe settings
         lightDurationTextView = view.findViewById(R.id.lightDurationTextView);
-        lightDurationTextView.setText(String.format(getString(R.string.light), lightDuration/1000.0));
+        lightDurationTextView.setText(String.format(getString(R.string.light), lightDuration/MILLISECONDS_PER_SECOND));
         lightDurationSeekBar = view.findViewById(R.id.lightDurationSeekBar);
         lightDurationSeekBar.setProgress(lightDuration);
         // perform seek bar change listener event used for getting the progress value
         lightDurationSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int sliderValue = 0;
-
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
-                sliderValue = value;
-                lightDurationTextView.setText(String.format(getString(R.string.light), sliderValue/1000.0));
-                lightDurationSeekBarChanged(sliderValue);
+                lightDurationTextView.setText(String.format(getString(R.string.light), value/MILLISECONDS_PER_SECOND));
+                lightDurationSeekBarChanged(value);
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) { }
@@ -225,17 +242,14 @@ public class MenuFragment extends Fragment {
         });
 
         darkDurationTextView = view.findViewById(R.id.darkDurationTextView);
-        darkDurationTextView.setText(String.format(getString(R.string.dark), darkDuration/1000.0));
+        darkDurationTextView.setText(String.format(getString(R.string.dark), darkDuration/MILLISECONDS_PER_SECOND));
         darkDurationSeekBar = view.findViewById(R.id.darkDurationSeekBar);
         darkDurationSeekBar.setProgress(darkDuration);
         // perform seek bar change listener event used for getting the slider value
         darkDurationSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int sliderValue = 0;
-
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
-                sliderValue = value;
-                darkDurationTextView.setText(String.format(getString(R.string.dark), sliderValue/1000.0));
-                darkDurationSeekBarChanged(sliderValue);
+                darkDurationTextView.setText(String.format(getString(R.string.dark), value/MILLISECONDS_PER_SECOND));
+                darkDurationSeekBarChanged(value);
             }
 
             public void onStartTrackingTouch(SeekBar seekBar) { }
@@ -254,13 +268,10 @@ public class MenuFragment extends Fragment {
         redValueSeekBar.setProgress(redValue);
         // perform seek bar change listener event used for getting the progress value
         redValueSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int sliderValue = 0;
-
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
-                sliderValue = value;
                 redValue = value;
-                redValueTextView.setText(String.format(getString(R.string.r), sliderValue));
-                redSeekBarChanged(sliderValue);
+                redValueTextView.setText(String.format(getString(R.string.r), value));
+                redSeekBarChanged(value);
                 String colorName = getColorName();
                 colorNameTextView.setText(colorName);
             }
@@ -278,13 +289,10 @@ public class MenuFragment extends Fragment {
         greenValueSeekBar.setProgress(greenValue);
         // perform seek bar change listener event used for getting the progress value
         greenValueSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int sliderValue = 0;
-
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
-                sliderValue = value;
                 greenValue = value;
-                greenValueTextView.setText(String.format(getString(R.string.g), sliderValue));
-                greenSeekBarChanged(sliderValue);
+                greenValueTextView.setText(String.format(getString(R.string.g), value));
+                greenSeekBarChanged(value);
                 String colorName = getColorName();
                 colorNameTextView.setText(colorName);
             }
@@ -302,13 +310,10 @@ public class MenuFragment extends Fragment {
         blueValueSeekBar.setProgress(blueValue);
         // perform seek bar change listener event used for getting the progress value
         blueValueSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int sliderValue = 0;
-
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
-                sliderValue = value;
                 blueValue = value;
-                blueValueTextView.setText(String.format(getString(R.string.b), sliderValue));
-                blueSeekBarChanged(sliderValue);
+                blueValueTextView.setText(String.format(getString(R.string.b), value));
+                blueSeekBarChanged(value);
                 String colorName = getColorName();
                 colorNameTextView.setText(colorName);
             }
@@ -327,13 +332,10 @@ public class MenuFragment extends Fragment {
         kelvinSeekBar.setProgress(temperature);
         // perform seek bar change listener event used for getting the progress value
         kelvinSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int sliderValue = 0;
-
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
-                sliderValue = value;
                 temperature = value;
-                kelvinTextView.setText(String.format(getString(R.string.k), sliderValue));
-                kelvinSeekBarChanged(sliderValue);
+                kelvinTextView.setText(String.format(getString(R.string.k), value));
+                kelvinSeekBarChanged(value);
                 String colorName = getColorName();
                 colorNameTextView.setText(colorName);
             }
@@ -397,15 +399,15 @@ public class MenuFragment extends Fragment {
                     .setNegativeButton(getString(R.string.huge_mistake),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog,int id) {
-                                    redValueTextView.setText(String.format(getString(R.string.r), 255));
-                                    greenValueTextView.setText(String.format(getString(R.string.g), 255));
-                                    blueValueTextView.setText(String.format(getString(R.string.b), 255));
-                                    redValueSeekBar.setProgress(255);
-                                    greenValueSeekBar.setProgress(255);
-                                    blueValueSeekBar.setProgress(255);
-                                    redValue = 255;
-                                    greenValue = 255;
-                                    blueValue = 255;
+                                    redValueTextView.setText(String.format(getString(R.string.r), MainActivity.MAX_SATURATION));
+                                    greenValueTextView.setText(String.format(getString(R.string.g), MainActivity.MAX_SATURATION));
+                                    blueValueTextView.setText(String.format(getString(R.string.b), MainActivity.MAX_SATURATION));
+                                    redValueSeekBar.setProgress(MainActivity.MAX_SATURATION);
+                                    greenValueSeekBar.setProgress(MainActivity.MAX_SATURATION);
+                                    blueValueSeekBar.setProgress(MainActivity.MAX_SATURATION);
+                                    redValue = MainActivity.MAX_SATURATION;
+                                    greenValue = MainActivity.MAX_SATURATION;
+                                    blueValue = MainActivity.MAX_SATURATION;
                                     activityCallback.onHugeMistakeMade();
                                 }
                             });
@@ -422,23 +424,23 @@ public class MenuFragment extends Fragment {
     public String getColorName() {
         String colorName = "";
         if (kelvinMode) {
-            if (1000 <= temperature && temperature <= 2000) {
+            if (CANDLE_FLAME_LOWER <= temperature && temperature <= CANDLE_FLAME_UPPER) {
                 colorName = getString(R.string.candle_flame);
-            } else if (2500 <= temperature && temperature <= 3000) {
+            } else if (DOMESTIC_LIGHTING_LOWER <= temperature && temperature <= DOMESTIC_LIGHTING_UPPER) {
                 colorName = getString(R.string.domestic_lighting);
-            } else if (3000 <= temperature && temperature <= 4000) {
+            } else if (EARLY_MORNING_EVENING_LOWER <= temperature && temperature <= EARLY_MORNING_EVENING_UPPER) {
                 colorName = getString(R.string.early_morning_evening);
-            } else if (4000 <= temperature && temperature <= 5000) {
+            } else if (FLUORESCENT_LOWER <= temperature && temperature <= FLUORESCENT_UPPER) {
                 colorName = getString(R.string.fluorescent);
-            } else if (5000 <= temperature && temperature <= 5500) {
+            } else if (FLASH_LOWER <= temperature && temperature <= FLASH_UPPER) {
                 colorName = getString(R.string.flash);
-            } else if (5500 <= temperature && temperature <= 6500) {
+            } else if (AVERAGE_DAYLIGHT_LOWER <= temperature && temperature <= AVERAGE_DAYLIGHT_UPPER) {
                 colorName = getString(R.string.average_daylight);
-            } else if (6000 <= temperature && temperature <= 7000) {
+            } else if (NOON_SUNLIGHT_LOWER <= temperature && temperature <= NOON_SUNLIGHT_UPPER) {
                 colorName = getString(R.string.noon_sunlight);
-            } else if (6500 <= temperature && temperature <= 8000) {
+            } else if (SHADE_LOWER <= temperature && temperature <= SHADE_UPPER) {
                 colorName = getString(R.string.shade);
-            } else if (10000 <= temperature && temperature <= 15000) {
+            } else if (BLUE_SKY_LOWER <= temperature && temperature <= BLUE_SKY_UPPER) {
                 colorName = getString(R.string.blue_sky);
             }
         } else {
@@ -447,57 +449,57 @@ public class MenuFragment extends Fragment {
                 if (greenValue <= buffer) {
                     if (blueValue <= buffer) {
                         colorName = "BLACK";
-                    } else if (blueValue >= 255 - buffer) {
+                    } else if (blueValue >= MainActivity.MAX_SATURATION - buffer) {
                         colorName = "BLUE";
                     }
 
-                } else if (greenValue >= 127 - buffer/2 && greenValue <= 127 + buffer/2) {
-                    if (blueValue >= 255 - buffer) {
+                } else if (greenValue >= MainActivity.MAX_SATURATION/2 - buffer/2 && greenValue <= MainActivity.MAX_SATURATION/2 + buffer/2) {
+                    if (blueValue >= MainActivity.MAX_SATURATION - buffer) {
                         colorName = "AZURE";
                     }
 
-                } else if (greenValue >= 255 - buffer) {
+                } else if (greenValue >= MainActivity.MAX_SATURATION - buffer) {
                     if (blueValue <= buffer) {
                         colorName = "GREEN";
-                    } else if (blueValue >= 127 - buffer/2 && blueValue <= 127 + buffer/2) {
+                    } else if (blueValue >= MainActivity.MAX_SATURATION/2 - buffer/2 && blueValue <= MainActivity.MAX_SATURATION/2 + buffer/2) {
                         colorName = "SPRING GREEN";
-                    } else if (blueValue >= 255 - buffer) {
+                    } else if (blueValue >= MainActivity.MAX_SATURATION - buffer) {
                         colorName = "CYAN";
                     }
 
                 }
-            } else if (redValue >= 127 - buffer/2 && redValue <= 127 + buffer/2) {
+            } else if (redValue >= MainActivity.MAX_SATURATION/2 - buffer/2 && redValue <= MainActivity.MAX_SATURATION/2 + buffer/2) {
                 if (greenValue <= buffer) {
-                    if (blueValue >= 255 - buffer) {
+                    if (blueValue >= MainActivity.MAX_SATURATION - buffer) {
                         colorName = "VIOLET";
                     }
 
-                } else if (greenValue >= 255 - buffer) {
+                } else if (greenValue >= MainActivity.MAX_SATURATION - buffer) {
                     if (blueValue <= buffer) {
                         colorName = "CHARTREUSE";
                     }
                 }
 
-            } else if (redValue >= 255 - buffer) {
+            } else if (redValue >= MainActivity.MAX_SATURATION - buffer) {
 
                 if (greenValue <= buffer) {
                     if (blueValue <= buffer) {
                         colorName = "RED";
-                    } else if (blueValue >= 127 - buffer/2 && blueValue <= 127 + buffer/2) {
+                    } else if (blueValue >= MainActivity.MAX_SATURATION/2 - buffer/2 && blueValue <= MainActivity.MAX_SATURATION/2 + buffer/2) {
                         colorName = "ROSE";
-                    } else if (blueValue >= 255 - buffer) {
+                    } else if (blueValue >= MainActivity.MAX_SATURATION - buffer) {
                         colorName = "MAGENTA";
                     }
 
-                } else if (greenValue >= 127 - buffer/2 && greenValue <= 127 + buffer/2) {
+                } else if (greenValue >= MainActivity.MAX_SATURATION/2 - buffer/2 && greenValue <= MainActivity.MAX_SATURATION/2 + buffer/2) {
                     if (blueValue <= buffer) {
                         colorName = "ORANGE";
                     }
 
-                } else if (greenValue >= 255 - buffer) {
+                } else if (greenValue >= MainActivity.MAX_SATURATION - buffer) {
                     if (blueValue <= buffer) {
                         colorName = "YELLOW";
-                    } else if (blueValue >= 255 - buffer) {
+                    } else if (blueValue >= MainActivity.MAX_SATURATION - buffer) {
                         colorName = "WHITE";
                     }
                 }
