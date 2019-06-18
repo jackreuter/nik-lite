@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context="com.cottagestudios.lighttool.MainActivity">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
@@ -29,6 +28,7 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:visibility="visible"
+                android:contentDescription="@string/colorViewDescription"
             />
         </FrameLayout>
 
@@ -37,18 +37,18 @@
             android:onClick="onClickMenu"
             android:layout_height="60dp"
             android:layout_width="60dp"
-            android:layout_marginRight="@dimen/outer_margin"
+            android:layout_marginEnd="@dimen/outer_margin"
             android:layout_marginBottom="@dimen/medium_margin"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true" />
+            android:layout_alignParentEnd="true" />
 
-        <jackreuter.niklite.VerticalSeekBar
+        <com.cottagestudios.lighttool.VerticalSeekBar
             android:id="@+id/brightnessSeekBar"
-            android:layout_marginRight="40dp"
+            android:layout_marginEnd="40dp"
             android:layout_width="wrap_content"
             android:layout_height="300dp"
             android:layout_above="@id/menuButton"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:progressDrawable="@drawable/brightness_seek_bar"
             android:thumb="@drawable/brightness_seek_thumb"
             android:max="255"/>

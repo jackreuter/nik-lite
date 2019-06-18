@@ -1,20 +1,20 @@
-package jackreuter.niklite;
+package com.cottagestudios.lighttool;
 
 public class SettingsItem {
 
-    String name;
-    int globalColorInt;
-    int rgbColorInt;
-    int temperature;
-    int lightDuration;
-    int darkDuration;
-    float shapeSize;
-    int shapeIndex;
-    boolean kelvinMode;
-    boolean lockMode;
-    boolean strobeMode;
+    private String name;
+    private int globalColorInt;
+    private int rgbColorInt;
+    private int temperature;
+    private int lightDuration;
+    private int darkDuration;
+    private float shapeSize;
+    private int shapeIndex;
+    private boolean kelvinMode;
+    private boolean lockMode;
+    private boolean strobeMode;
 
-    public SettingsItem(String n,
+    SettingsItem(String n,
                         int global,
                         int rgb,
                         int temp,
@@ -42,41 +42,41 @@ public class SettingsItem {
         return name;
     }
 
-    public int getGlobalColorInt() {
+    int getGlobalColorInt() {
         return globalColorInt;
     }
 
-    public int getRgbColorInt() {
+    int getRgbColorInt() {
         return rgbColorInt;
     }
 
-    public int getTemperature() {
+    int getTemperature() {
         return  temperature;
     }
 
-    public int getLightDuration() {
+    int getLightDuration() {
         return lightDuration;
     }
 
-    public int getDarkDuration() {
+    int getDarkDuration() {
         return  darkDuration;
     }
 
-    public float getShapeSize() {
+    float getShapeSize() {
         return shapeSize;
     }
 
-    public int getShapeIndex() { return shapeIndex; }
+    int getShapeIndex() { return shapeIndex; }
 
-    public boolean getKelvinMode() {
+    boolean getKelvinMode() {
         return kelvinMode;
     }
 
-    public boolean getLockMode() {
+    boolean getLockMode() {
         return lockMode;
     }
 
-    public boolean getStrobeMode() {
+    boolean getStrobeMode() {
         return strobeMode;
     }
 }

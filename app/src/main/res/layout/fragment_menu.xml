@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MenuFragment">
+    tools:context="com.cottagestudios.lighttool.MenuFragment">
 
     <View
         android:id="@+id/menuBackground"
@@ -15,8 +15,8 @@
         android:id="@+id/headerLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/outer_margin"
-        android:layout_marginRight="@dimen/outer_margin"
+        android:layout_marginStart="@dimen/outer_margin"
+        android:layout_marginEnd="@dimen/outer_margin"
         android:layout_marginTop="@dimen/outer_margin"
         android:layout_marginBottom="@dimen/medium_margin"
         >
@@ -24,7 +24,7 @@
         <Button
             android:id="@+id/openButton"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -33,8 +33,8 @@
         <Button
             android:id="@+id/saveButton"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/openButton"
-            android:layout_marginLeft="@dimen/medium_margin"
+            android:layout_toEndOf="@+id/openButton"
+            android:layout_marginStart="@dimen/medium_margin"
             android:layout_centerVertical="true"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -43,13 +43,14 @@
         <TextView
             android:id="@+id/kelvinText"
             android:fontFamily="sans-serif-medium"
-            android:text="KELVIN:"
+            android:text="@string/kelvin"
             android:textColor="@android:color/black"
-            android:layout_toLeftOf="@+id/kelvinButton"
+            android:layout_toStartOf="@+id/kelvinButton"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_menu"/>
+            android:textSize="@dimen/text_size_menu"
+            tools:ignore="RelativeOverlap" />
 
         <ToggleButton
             android:id="@+id/kelvinButton"
@@ -57,7 +58,7 @@
             android:textOn=""
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="@layout/toggle_button_background"/>
 
@@ -68,8 +69,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/headerLayout"
-        android:layout_marginLeft="@dimen/outer_margin"
-        android:layout_marginRight="@dimen/outer_margin"
+        android:layout_marginStart="@dimen/outer_margin"
+        android:layout_marginEnd="@dimen/outer_margin"
         android:layout_marginBottom="@dimen/outer_margin"
         >
         <LinearLayout
@@ -86,6 +87,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/square_selected"
+                android:contentDescription="@string/shape_selected"
                 />
 
             <ImageView
@@ -93,7 +95,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/square_selected"
-                android:layout_marginLeft="@dimen/shape_selector_margin"
+                android:layout_marginStart="@dimen/shape_selector_margin"
+                android:contentDescription="@string/shape_selected"
                 />
 
             <ImageView
@@ -101,7 +104,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/square_selected"
-                android:layout_marginLeft="@dimen/shape_selector_margin"
+                android:layout_marginStart="@dimen/shape_selector_margin"
+                android:contentDescription="@string/shape_selected"
                 />
 
             <ImageView
@@ -109,7 +113,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/square_selected"
-                android:layout_marginLeft="@dimen/shape_selector_margin"
+                android:layout_marginStart="@dimen/shape_selector_margin"
+                android:contentDescription="@string/shape_selected"
                 />
 
             <ImageView
@@ -117,7 +122,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/square_selected"
-                android:layout_marginLeft="@dimen/shape_selector_margin"
+                android:layout_marginStart="@dimen/shape_selector_margin"
+                android:contentDescription="@string/shape_selected"
                 />
 
         </LinearLayout>
@@ -136,6 +142,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/fullscreen_24px"
+                style="?android:buttonBarButtonStyle"
                 />
 
             <Button
@@ -143,7 +150,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/circle_24px"
-                android:layout_marginLeft="@dimen/shape_selector_margin"
+                android:layout_marginStart="@dimen/shape_selector_margin"
+                style="?android:buttonBarButtonStyle"
                 />
 
             <Button
@@ -151,7 +159,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/star_24px"
-                android:layout_marginLeft="@dimen/shape_selector_margin"
+                android:layout_marginStart="@dimen/shape_selector_margin"
+                style="?android:buttonBarButtonStyle"
                 />
 
             <Button
@@ -159,7 +168,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/heart__24px"
-                android:layout_marginLeft="@dimen/shape_selector_margin"
+                android:layout_marginStart="@dimen/shape_selector_margin"
+                style="?android:buttonBarButtonStyle"
                 />
 
             <Button
@@ -167,7 +177,8 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:background="@drawable/plus_24px"
-                android:layout_marginLeft="@dimen/shape_selector_margin"
+                android:layout_marginStart="@dimen/shape_selector_margin"
+                style="?android:buttonBarButtonStyle"
                 />
 
         </LinearLayout>
@@ -177,8 +188,8 @@
         android:id="@+id/strobeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/outer_margin"
-        android:layout_marginRight="@dimen/outer_margin"
+        android:layout_marginStart="@dimen/outer_margin"
+        android:layout_marginEnd="@dimen/outer_margin"
         android:layout_marginBottom="@dimen/outer_margin"
         android:layout_below="@+id/shapeSelectLayout"
         >
@@ -189,7 +200,7 @@
             android:textOn=""
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:background="@layout/toggle_button_background_vertical"
             />
@@ -197,7 +208,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/strobeButton"
+            android:layout_toEndOf="@+id/strobeButton"
             android:orientation="vertical"
             android:weightSum="2"
             >
@@ -226,7 +237,7 @@
                     android:min="100"
                     android:progressDrawable="@drawable/seek_bar"
                     android:thumb="@drawable/seek_thumb"
-                    android:layout_toRightOf="@id/lightDurationTextView"
+                    android:layout_toEndOf="@id/lightDurationTextView"
                     android:layout_centerVertical="true"
                     />
             </RelativeLayout>
@@ -254,7 +265,7 @@
                     android:min="100"
                     android:progressDrawable="@drawable/seek_bar"
                     android:thumb="@drawable/seek_thumb"
-                    android:layout_toRightOf="@id/darkDurationTextView"
+                    android:layout_toEndOf="@id/darkDurationTextView"
                     android:layout_centerVertical="true"
                     />
             </RelativeLayout>
@@ -268,8 +279,8 @@
         android:layout_height="match_parent"
         android:layout_below="@id/strobeLayout"
         android:layout_above="@id/lockButton"
-        android:layout_marginLeft="@dimen/outer_margin"
-        android:layout_marginRight="@dimen/outer_margin"
+        android:layout_marginStart="@dimen/outer_margin"
+        android:layout_marginEnd="@dimen/outer_margin"
         android:layout_marginBottom="@dimen/medium_margin"
         >
 
@@ -283,7 +294,7 @@
             android:layout_centerHorizontal="true"
             android:textSize="@dimen/text_size_menu"/>
 
-        <jackreuter.niklite.VerticalSeekBar
+        <com.cottagestudios.lighttool.VerticalSeekBar
             android:id="@+id/kelvinSeekBar"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
@@ -301,7 +312,7 @@
             android:layout_height="match_parent"
             android:weightSum="3"
             android:layout_above="@+id/colorNameTextView"
-            >
+            android:baselineAligned="false">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -319,7 +330,7 @@
                     android:textSize="@dimen/text_size_menu"
                     />
 
-                <jackreuter.niklite.VerticalSeekBar
+                <com.cottagestudios.lighttool.VerticalSeekBar
                     android:id="@+id/redSeekBar"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
@@ -345,7 +356,7 @@
                     android:layout_centerHorizontal="true"
                     android:textSize="@dimen/text_size_menu"/>
 
-                <jackreuter.niklite.VerticalSeekBar
+                <com.cottagestudios.lighttool.VerticalSeekBar
                     android:id="@+id/greenSeekBar"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"
@@ -371,7 +382,7 @@
                     android:layout_centerHorizontal="true"
                     android:textSize="@dimen/text_size_menu"/>
 
-                <jackreuter.niklite.VerticalSeekBar
+                <com.cottagestudios.lighttool.VerticalSeekBar
                     android:id="@+id/blueSeekBar"
                     android:layout_width="wrap_content"
                     android:layout_height="fill_parent"

@@ -1,10 +1,10 @@
-package jackreuter.niklite;
+package com.cottagestudios.lighttool;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,6 +14,7 @@ import android.graphics.Point;
 import android.os.Handler;
 import android.provider.Settings;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
-public class MainActivity extends Activity implements MenuFragment.MenuListener, FileListFragment.OnListFragmentInteractionListener {
+public class MainActivity extends FragmentActivity implements MenuFragment.MenuListener, FileListFragment.OnListFragmentInteractionListener {
 
     ImageView colorView;
     FrameLayout colorFrame;
@@ -125,13 +126,13 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
         int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
         decorView.setSystemUiVisibility(uiOptions);
 
-        colorView = (ImageView) findViewById(R.id.colorView);
-        colorFrame = (FrameLayout) findViewById(R.id.colorFrame);
-        menuButton = (Button) findViewById(R.id.menuButton);
+        colorView = findViewById(R.id.colorView);
+        colorFrame = findViewById(R.id.colorFrame);
+        menuButton = findViewById(R.id.menuButton);
         menuButton.setBackgroundResource(R.drawable.ic_baseline_menu_24px);
-        menuFrame = (FrameLayout) findViewById(R.id.menuFrame);
+        menuFrame = findViewById(R.id.menuFrame);
 
-        brightnessBar = (VerticalSeekBar) findViewById(R.id.brightnessSeekBar);
+        brightnessBar = findViewById(R.id.brightnessSeekBar);
         try {
             brightness = Settings.System.getInt(this.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
         } catch (Settings.SettingNotFoundException e) {
@@ -139,7 +140,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
         }
         brightnessBar.setProgress(brightness);
 
-        fragmentManager = getFragmentManager();
+        fragmentManager = getSupportFragmentManager();
         setUIEnabled(false);
         mdisp = getWindowManager().getDefaultDisplay();
         mdispSize = new Point();
@@ -255,7 +256,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
     /** Check whether this app has android write settings permission */
     private boolean hasWriteSettingsPermission(Context context)
     {
-        boolean ret = true;
+        boolean ret;
         // Get the result from below code.
         ret = Settings.System.canWrite(context);
         return ret;
@@ -334,8 +335,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
         float X = event.getX();
         float Y = event.getY();
 
-        if (lockMode) {}
-        else {
+        if (!lockMode && event.getPointerCount() == 1) {
             if (kelvinMode) {
                 //kelvin mode
                 temperature = getTemperatureFromY(Y);
@@ -373,15 +373,13 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
                     tmpSize = MIN_SHAPE_WIDTH;
                 }
 
-                /**
-                if (tmpSize >= maxX) {
-                    tmpSize = maxX;
+                if (tmpSize >= 15 * maxX) {
+                    tmpSize = 15 * maxX;
                 }
 
-                if (tmpSize >= maxY) {
-                    tmpSize = maxY;
+                if (tmpSize >= 15 * maxY) {
+                    tmpSize = 15 * maxY;
                 }
-                 */
 
                 shapeSize = tmpSize;
                 colorView.requestLayout();
@@ -455,10 +453,10 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
 
                 //figure out endpoint of line through center
                 if (b < 0) {
-                    yLim = 0 + BUFFER_SIZE;
+                    yLim = BUFFER_SIZE;
                     xLim = (yLim - b) / m;
                 } else {
-                    xLim = 0 + BUFFER_SIZE;
+                    xLim =BUFFER_SIZE;
                     yLim = m * xLim + b;
                 }
             } else {
@@ -467,7 +465,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
 
                 //figure out endpoint of line through center
                 if (b > maxY) {
-                    yLim = 0 + BUFFER_SIZE;
+                    yLim = BUFFER_SIZE;
                     xLim = (yLim - b) / m;
                 } else {
                     xLim = maxX - BUFFER_SIZE;
@@ -485,7 +483,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
                     yLim = maxY - BUFFER_SIZE;
                     xLim = (yLim - b) / m;
                 } else {
-                    xLim = 0 + BUFFER_SIZE;
+                    xLim = BUFFER_SIZE;
                     yLim = m * xLim + b;
                 }
 
@@ -507,8 +505,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
 
         //get saturation based on distance from center, populate textView
         float saturation = getSaturationValue(midX, midY, X, Y, xLim, yLim);
-        float[] hsvArray = {angle, saturation, 1};
-        return hsvArray;
+        return new float[]{angle, saturation, 1};
     }
 
     /** convert angle from radians to degrees */
@@ -625,7 +622,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
     public void onOpenButtonClick () {
         SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
         Map<String, ?> allEntries = sharedPref.getAll();
-        ArrayList<String> filenames = new ArrayList<String>();
+        ArrayList<String> filenames = new ArrayList<>();
         for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
             filenames.add(entry.getKey());
         }
@@ -642,7 +639,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
     public void onSaveButtonClick() {
         // get save_prompt.xml view
         LayoutInflater li = LayoutInflater.from(MainActivity.this);
-        View savePromptView = li.inflate(R.layout.save_prompt, null);
+        @SuppressLint("InflateParams") View savePromptView = li.inflate(R.layout.save_prompt, null);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 MainActivity.this);
@@ -650,7 +647,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
         // set save_prompt.xml to alertdialog builder
         alertDialogBuilder.setView(savePromptView);
 
-        final EditText userInput = (EditText) savePromptView.findViewById(R.id.editTextDialogUserInput);
+        final EditText userInput = savePromptView.findViewById(R.id.editTextDialogUserInput);
 
         // set dialog message
         alertDialogBuilder
@@ -677,7 +674,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
         // custom listener to validate user input
         class CustomListener implements View.OnClickListener {
             private final Dialog dialog;
-            public CustomListener(Dialog dialog) {
+            private CustomListener(Dialog dialog) {
                 this.dialog = dialog;
             }
             @Override
@@ -691,7 +688,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
                 } else {
                     SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
                     Map<String, ?> allEntries = sharedPref.getAll();
-                    Boolean duplicateFound = false;
+                    boolean duplicateFound = false;
                     for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
                         if (entry.getKey().equals(input)) {
                             duplicateFound = true;
@@ -721,7 +718,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
                         Gson gson = new Gson();
                         String json = gson.toJson(currentSettings);
                         editor.putString(input, json);
-                        editor.commit();
+                        editor.apply();
                         dialog.dismiss();
                         Toast.makeText(MainActivity.this, "Preset saved", Toast.LENGTH_SHORT).show();
                     }
@@ -818,24 +815,21 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
 
     @Override
     public void onRedSeekBarChanged(int seekBarValue) {
-        int redValue = seekBarValue;
-        rgbColorInt = Color.rgb(redValue, Color.green(rgbColorInt), Color.blue(rgbColorInt));
+        rgbColorInt = Color.rgb(seekBarValue, Color.green(rgbColorInt), Color.blue(rgbColorInt));
         globalColorInt = rgbColorInt;
         colorBackground();
     }
 
     @Override
     public void onGreenSeekBarChanged(int seekBarValue) {
-        int greenValue = seekBarValue;
-        rgbColorInt = Color.rgb(Color.red(rgbColorInt), greenValue, Color.blue(rgbColorInt));
+        rgbColorInt = Color.rgb(Color.red(rgbColorInt), seekBarValue, Color.blue(rgbColorInt));
         globalColorInt = rgbColorInt;
         colorBackground();
     }
 
     @Override
     public void onBlueSeekBarChanged(int seekBarValue) {
-        int blueValue = seekBarValue;
-        rgbColorInt = Color.rgb(Color.red(rgbColorInt), Color.green(rgbColorInt), blueValue);
+        rgbColorInt = Color.rgb(Color.red(rgbColorInt), Color.green(rgbColorInt), seekBarValue);
         globalColorInt = rgbColorInt;
         colorBackground();
     }
@@ -859,9 +853,9 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
     public void onDeleteButtonClicked(final String item) {
         // get delete_prompt.xml view
         LayoutInflater li = LayoutInflater.from(MainActivity.this);
-        View deletePromptView = li.inflate(R.layout.delete_prompt, null);
+        @SuppressLint("InflateParams") View deletePromptView = li.inflate(R.layout.delete_prompt, null);
         TextView deletePromptText = deletePromptView.findViewById(R.id.textView1);
-        deletePromptText.setText("Delete " + item + "?");
+        deletePromptText.setText(String.format(getString(R.string.delete), item));
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 MainActivity.this);
@@ -878,7 +872,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
                                 SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPref.edit();
                                 editor.remove(item);
-                                editor.commit();
+                                editor.apply();
                                 killFileListFragment();
                                 onOpenButtonClick();
                             }
@@ -901,7 +895,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
     @Override
     public void onItemClicked(String item) {
         SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
-        Boolean strobeWasRunning = strobeMode;
+        boolean strobeWasRunning = strobeMode;
 
         Gson gson = new Gson();
         String json = sharedPref.getString(item, "");

@@ -1,4 +1,4 @@
-package jackreuter.niklite;
+package com.cottagestudios.lighttool;
 
 import org.junit.Test;
 

@@ -1,10 +1,12 @@
-package jackreuter.niklite;
+package com.cottagestudios.lighttool;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-
 
 public class MenuFragment extends Fragment {
 
@@ -39,23 +40,23 @@ public class MenuFragment extends Fragment {
     VerticalSeekBar redValueSeekBar, greenValueSeekBar, blueValueSeekBar, kelvinSeekBar;
 
     public interface MenuListener {
-        public void onSaveButtonClick();
-        public void onOpenButtonClick();
-        public void onKelvinButtonClick();
-        public void onLockButtonClick();
-        public void onFullscreenButtonClick();
-        public void onCircleButtonClick();
-        public void onStarButtonClick();
-        public void onHeartButtonClick();
-        public void onPlusButtonClick();
-        public void onStrobeButtonClick();
-        public void onLightDurationSeekBarChanged(int seekBarValue);
-        public void onDarkDurationSeekBarChanged(int seekBarValue);
-        public void onRedSeekBarChanged(int seekBarValue);
-        public void onGreenSeekBarChanged(int seekBarValue);
-        public void onBlueSeekBarChanged(int seekBarValue);
-        public void onKelvinSeekBarChanged(int seekBarValue);
-        public void onHugeMistakeMade();
+        void onSaveButtonClick();
+        void onOpenButtonClick();
+        void onKelvinButtonClick();
+        void onLockButtonClick();
+        void onFullscreenButtonClick();
+        void onCircleButtonClick();
+        void onStarButtonClick();
+        void onHeartButtonClick();
+        void onPlusButtonClick();
+        void onStrobeButtonClick();
+        void onLightDurationSeekBarChanged(int seekBarValue);
+        void onDarkDurationSeekBarChanged(int seekBarValue);
+        void onRedSeekBarChanged(int seekBarValue);
+        void onGreenSeekBarChanged(int seekBarValue);
+        void onBlueSeekBarChanged(int seekBarValue);
+        void onKelvinSeekBarChanged(int seekBarValue);
+        void onHugeMistakeMade();
 
     }
 
@@ -109,7 +110,7 @@ public class MenuFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
@@ -123,28 +124,28 @@ public class MenuFragment extends Fragment {
             }
         });
 
-        openButton = (Button) view.findViewById(R.id.openButton);
+        openButton = view.findViewById(R.id.openButton);
         openButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 openButtonClicked(v);
             }
         });
 
-        saveButton = (Button) view.findViewById(R.id.saveButton);
+        saveButton = view.findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 saveButtonClicked(v);
             }
         });
 
-        kelvinButton = (ToggleButton) view.findViewById(R.id.kelvinButton);
+        kelvinButton = view.findViewById(R.id.kelvinButton);
         kelvinButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 kelvinButtonClicked(v);
             }
         });
 
-        lockButton = (ToggleButton) view.findViewById(R.id.lockButton);
+        lockButton = view.findViewById(R.id.lockButton);
         lockButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 lockButtonClicked(v);
@@ -152,17 +153,17 @@ public class MenuFragment extends Fragment {
         });
 
         //create shape selection buttons and selection outline images
-        fullscreenSelectedImageView = (ImageView) view.findViewById(R.id.fullScreenSelected);
-        circleSelectedImageView = (ImageView) view.findViewById(R.id.circleSelected);
-        starSelectedImageView = (ImageView) view.findViewById(R.id.starSelected);
-        heartSelectedImageView = (ImageView) view.findViewById(R.id.heartSelected);
-        plusSelectedImageView = (ImageView) view.findViewById(R.id.plusSelected);
+        fullscreenSelectedImageView = view.findViewById(R.id.fullScreenSelected);
+        circleSelectedImageView = view.findViewById(R.id.circleSelected);
+        starSelectedImageView = view.findViewById(R.id.starSelected);
+        heartSelectedImageView = view.findViewById(R.id.heartSelected);
+        plusSelectedImageView = view.findViewById(R.id.plusSelected);
 
-        fullscreenButton = (Button) view.findViewById(R.id.fullScreenButton);
-        circleButton = (Button) view.findViewById(R.id.circleButton);
-        starButton = (Button) view.findViewById(R.id.starButton);
-        heartButton = (Button) view.findViewById(R.id.heartButton);
-        plusButton = (Button) view.findViewById(R.id.plusButton);
+        fullscreenButton = view.findViewById(R.id.fullScreenButton);
+        circleButton = view.findViewById(R.id.circleButton);
+        starButton = view.findViewById(R.id.starButton);
+        heartButton = view.findViewById(R.id.heartButton);
+        plusButton = view.findViewById(R.id.plusButton);
 
         setShapeSelectorImage();
 
@@ -192,7 +193,7 @@ public class MenuFragment extends Fragment {
             }
         });
 
-        strobeButton = (ToggleButton) view.findViewById(R.id.strobeButton);
+        strobeButton = view.findViewById(R.id.strobeButton);
         strobeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 strobeButtonClicked(v);
@@ -203,10 +204,10 @@ public class MenuFragment extends Fragment {
         lockButton.setChecked(lockMode);
         strobeButton.setChecked(strobeMode);
 
-        /** set up SeekBar's for strobe settings */
-        lightDurationTextView = (TextView) view.findViewById(R.id.lightDurationTextView);
-        lightDurationTextView.setText(String.format("LIGHT: %.1fs", lightDuration/1000.0));
-        lightDurationSeekBar = (SeekBar) view.findViewById(R.id.lightDurationSeekBar);
+        // set up SeekBar's for strobe settings
+        lightDurationTextView = view.findViewById(R.id.lightDurationTextView);
+        lightDurationTextView.setText(String.format(getString(R.string.light), lightDuration/1000.0));
+        lightDurationSeekBar = view.findViewById(R.id.lightDurationSeekBar);
         lightDurationSeekBar.setProgress(lightDuration);
         // perform seek bar change listener event used for getting the progress value
         lightDurationSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -214,7 +215,7 @@ public class MenuFragment extends Fragment {
 
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
                 sliderValue = value;
-                lightDurationTextView.setText(String.format("LIGHT: %.1fs", sliderValue/1000.0));
+                lightDurationTextView.setText(String.format(getString(R.string.light), sliderValue/1000.0));
                 lightDurationSeekBarChanged(sliderValue);
             }
 
@@ -223,9 +224,9 @@ public class MenuFragment extends Fragment {
             public void onStopTrackingTouch(SeekBar seekBar) { }
         });
 
-        darkDurationTextView = (TextView) view.findViewById(R.id.darkDurationTextView);
-        darkDurationTextView.setText(String.format("DARK: %.1fs ", darkDuration/1000.0));
-        darkDurationSeekBar = (SeekBar) view.findViewById(R.id.darkDurationSeekBar);
+        darkDurationTextView = view.findViewById(R.id.darkDurationTextView);
+        darkDurationTextView.setText(String.format(getString(R.string.dark), darkDuration/1000.0));
+        darkDurationSeekBar = view.findViewById(R.id.darkDurationSeekBar);
         darkDurationSeekBar.setProgress(darkDuration);
         // perform seek bar change listener event used for getting the slider value
         darkDurationSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -233,7 +234,7 @@ public class MenuFragment extends Fragment {
 
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
                 sliderValue = value;
-                darkDurationTextView.setText(String.format("DARK: %.1fs ", sliderValue/1000.0));
+                darkDurationTextView.setText(String.format(getString(R.string.dark), sliderValue/1000.0));
                 darkDurationSeekBarChanged(sliderValue);
             }
 
@@ -242,14 +243,14 @@ public class MenuFragment extends Fragment {
             public void onStopTrackingTouch(SeekBar seekBar) { }
         });
 
-        colorNameTextView = (TextView) view.findViewById(R.id.colorNameTextView);
+        colorNameTextView = view.findViewById(R.id.colorNameTextView);
         String colorName = getColorName();
         colorNameTextView.setText(colorName);
 
-        /** set up VerticalSeekBar's for RGB selection */
-        redValueTextView = (TextView) view.findViewById(R.id.redValueTextView);
-        redValueTextView.setText("R: " + redValue);
-        redValueSeekBar = (VerticalSeekBar) view.findViewById(R.id.redSeekBar);
+        // set up VerticalSeekBar's for RGB selection
+        redValueTextView = view.findViewById(R.id.redValueTextView);
+        redValueTextView.setText(String.format(getString(R.string.r), redValue));
+        redValueSeekBar = view.findViewById(R.id.redSeekBar);
         redValueSeekBar.setProgress(redValue);
         // perform seek bar change listener event used for getting the progress value
         redValueSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -258,7 +259,7 @@ public class MenuFragment extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
                 sliderValue = value;
                 redValue = value;
-                redValueTextView.setText("R: " + sliderValue);
+                redValueTextView.setText(String.format(getString(R.string.r), sliderValue));
                 redSeekBarChanged(sliderValue);
                 String colorName = getColorName();
                 colorNameTextView.setText(colorName);
@@ -271,9 +272,9 @@ public class MenuFragment extends Fragment {
             }
         });
 
-        greenValueTextView = (TextView) view.findViewById(R.id.greenValueTextView);
-        greenValueTextView.setText("G: " + greenValue);
-        greenValueSeekBar = (VerticalSeekBar) view.findViewById(R.id.greenSeekBar);
+        greenValueTextView = view.findViewById(R.id.greenValueTextView);
+        greenValueTextView.setText(String.format(getString(R.string.g), greenValue));
+        greenValueSeekBar = view.findViewById(R.id.greenSeekBar);
         greenValueSeekBar.setProgress(greenValue);
         // perform seek bar change listener event used for getting the progress value
         greenValueSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -282,7 +283,7 @@ public class MenuFragment extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
                 sliderValue = value;
                 greenValue = value;
-                greenValueTextView.setText("G: " + sliderValue);
+                greenValueTextView.setText(String.format(getString(R.string.g), sliderValue));
                 greenSeekBarChanged(sliderValue);
                 String colorName = getColorName();
                 colorNameTextView.setText(colorName);
@@ -295,9 +296,9 @@ public class MenuFragment extends Fragment {
             }
         });
 
-        blueValueTextView = (TextView) view.findViewById(R.id.blueValueTextView);
-        blueValueTextView.setText("B: " + blueValue);
-        blueValueSeekBar = (VerticalSeekBar) view.findViewById(R.id.blueSeekBar);
+        blueValueTextView = view.findViewById(R.id.blueValueTextView);
+        blueValueTextView.setText(String.format(getString(R.string.b), blueValue));
+        blueValueSeekBar = view.findViewById(R.id.blueSeekBar);
         blueValueSeekBar.setProgress(blueValue);
         // perform seek bar change listener event used for getting the progress value
         blueValueSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -306,7 +307,7 @@ public class MenuFragment extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
                 sliderValue = value;
                 blueValue = value;
-                blueValueTextView.setText("B: " + sliderValue);
+                blueValueTextView.setText(String.format(getString(R.string.b), sliderValue));
                 blueSeekBarChanged(sliderValue);
                 String colorName = getColorName();
                 colorNameTextView.setText(colorName);
@@ -319,10 +320,10 @@ public class MenuFragment extends Fragment {
             }
         });
 
-        /** set up text view and seek bar for kelvin mode */
-        kelvinTextView = (TextView) view.findViewById(R.id.kelvinTextView);
-        kelvinTextView.setText(temperature+"K");
-        kelvinSeekBar = (VerticalSeekBar) view.findViewById(R.id.kelvinSeekBar);
+        // set up text view and seek bar for kelvin mode
+        kelvinTextView = view.findViewById(R.id.kelvinTextView);
+        kelvinTextView.setText(String.format(getString(R.string.k), temperature));
+        kelvinSeekBar = view.findViewById(R.id.kelvinSeekBar);
         kelvinSeekBar.setProgress(temperature);
         // perform seek bar change listener event used for getting the progress value
         kelvinSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -331,7 +332,7 @@ public class MenuFragment extends Fragment {
             public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
                 sliderValue = value;
                 temperature = value;
-                kelvinTextView.setText(sliderValue+"K");
+                kelvinTextView.setText(String.format(getString(R.string.k), sliderValue));
                 kelvinSeekBarChanged(sliderValue);
                 String colorName = getColorName();
                 colorNameTextView.setText(colorName);
@@ -382,23 +383,23 @@ public class MenuFragment extends Fragment {
     public void easterEggCheck() {
         if (redValue == 69 && greenValue == 69 && blueValue == 69) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
-            alertDialogBuilder.setTitle("Are you sure?");
+            alertDialogBuilder.setTitle(getString(R.string.are_you_sure));
 
             // set dialog message
             alertDialogBuilder
                     //.setCancelable(false)
-                    .setPositiveButton("Yes, I'm sure.",
+                    .setPositiveButton(getString(R.string.yes_im_sure),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog,int id) {
                                     dialog.cancel();
                                 }
                             })
-                    .setNegativeButton("I've made a huge mistake.",
+                    .setNegativeButton(getString(R.string.huge_mistake),
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog,int id) {
-                                    redValueTextView.setText("R: 255");
-                                    greenValueTextView.setText("R: 255");
-                                    blueValueTextView.setText("R: 255");
+                                    redValueTextView.setText(String.format(getString(R.string.r), 255));
+                                    greenValueTextView.setText(String.format(getString(R.string.g), 255));
+                                    blueValueTextView.setText(String.format(getString(R.string.b), 255));
                                     redValueSeekBar.setProgress(255);
                                     greenValueSeekBar.setProgress(255);
                                     blueValueSeekBar.setProgress(255);
@@ -422,25 +423,23 @@ public class MenuFragment extends Fragment {
         String colorName = "";
         if (kelvinMode) {
             if (1000 <= temperature && temperature <= 2000) {
-                colorName = "CANDLE FLAME";
+                colorName = getString(R.string.candle_flame);
             } else if (2500 <= temperature && temperature <= 3000) {
-                colorName = "DOMESTIC LIGHTING";
+                colorName = getString(R.string.domestic_lighting);
             } else if (3000 <= temperature && temperature <= 4000) {
-                colorName = "EARLY MORNING/EVENING";
+                colorName = getString(R.string.early_morning_evening);
             } else if (4000 <= temperature && temperature <= 5000) {
-                colorName = "FLUORESCENT";
+                colorName = getString(R.string.fluorescent);
             } else if (5000 <= temperature && temperature <= 5500) {
-                colorName = "FLASH";
+                colorName = getString(R.string.flash);
             } else if (5500 <= temperature && temperature <= 6500) {
-                colorName = "AVERAGE DAYLIGHT";
+                colorName = getString(R.string.average_daylight);
             } else if (6000 <= temperature && temperature <= 7000) {
-                colorName = "NOON SUNLIGHT";
+                colorName = getString(R.string.noon_sunlight);
             } else if (6500 <= temperature && temperature <= 8000) {
-                colorName = "SHADE";
+                colorName = getString(R.string.shade);
             } else if (10000 <= temperature && temperature <= 15000) {
-                colorName = "BLUE SKY";
-            } else {
-
+                colorName = getString(R.string.blue_sky);
             }
         } else {
             int buffer = 10; 
@@ -448,23 +447,13 @@ public class MenuFragment extends Fragment {
                 if (greenValue <= buffer) {
                     if (blueValue <= buffer) {
                         colorName = "BLACK";
-                    } else if (blueValue >= 127 - buffer/2 && blueValue <= 127 + buffer/2) {
-
                     } else if (blueValue >= 255 - buffer) {
                         colorName = "BLUE";
-                    } else {
-
                     }
 
                 } else if (greenValue >= 127 - buffer/2 && greenValue <= 127 + buffer/2) {
-                    if (blueValue <= buffer) {
-
-                    } else if (blueValue >= 127 - buffer/2 && blueValue <= 127 + buffer/2) {
-
-                    } else if (blueValue >= 255 - buffer) {
+                    if (blueValue >= 255 - buffer) {
                         colorName = "AZURE";
-                    } else {
-
                     }
 
                 } else if (greenValue >= 255 - buffer) {
@@ -474,49 +463,19 @@ public class MenuFragment extends Fragment {
                         colorName = "SPRING GREEN";
                     } else if (blueValue >= 255 - buffer) {
                         colorName = "CYAN";
-                    } else {
-
                     }
-
-                } else {
 
                 }
             } else if (redValue >= 127 - buffer/2 && redValue <= 127 + buffer/2) {
                 if (greenValue <= buffer) {
-                    if (blueValue <= buffer) {
-
-                    } else if (blueValue >= 127 - buffer/2 && blueValue <= 127 + buffer/2) {
-
-                    } else if (blueValue >= 255 - buffer) {
+                    if (blueValue >= 255 - buffer) {
                         colorName = "VIOLET";
-                    } else {
-
-                    }
-
-                } else if (greenValue >= 127 - buffer/2 && greenValue <= 127 + buffer/2) {
-                    if (blueValue <= buffer) {
-
-                    } else if (blueValue >= 127 - buffer/2 && blueValue <= 127 + buffer/2) {
-
-                    } else if (blueValue >= 255 - buffer) {
-
-                    } else {
-
                     }
 
                 } else if (greenValue >= 255 - buffer) {
                     if (blueValue <= buffer) {
                         colorName = "CHARTREUSE";
-                    } else if (blueValue >= 127 - buffer/2 && blueValue <= 127 + buffer/2) {
-
-                    } else if (blueValue >= 255 - buffer) {
-
-                    } else {
-
                     }
-
-                } else {
-
                 }
 
             } else if (redValue >= 255 - buffer) {
@@ -528,38 +487,20 @@ public class MenuFragment extends Fragment {
                         colorName = "ROSE";
                     } else if (blueValue >= 255 - buffer) {
                         colorName = "MAGENTA";
-                    } else {
-
                     }
 
                 } else if (greenValue >= 127 - buffer/2 && greenValue <= 127 + buffer/2) {
                     if (blueValue <= buffer) {
                         colorName = "ORANGE";
-                    } else if (blueValue >= 127 - buffer/2 && blueValue <= 127 + buffer/2) {
-
-                    } else if (blueValue >= 255 - buffer) {
-
-                    } else {
-
                     }
 
                 } else if (greenValue >= 255 - buffer) {
                     if (blueValue <= buffer) {
                         colorName = "YELLOW";
-                    } else if (blueValue >= 127 - buffer/2 && blueValue <= 127 + buffer/2) {
-
                     } else if (blueValue >= 255 - buffer) {
                         colorName = "WHITE";
-                    } else {
-
                     }
-
-                } else {
-
                 }
-
-            } else {
-
             }
         }
         return colorName;
@@ -680,8 +621,9 @@ public class MenuFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Activity activity = (Activity) context;
         try {
             activityCallback = (MenuListener) activity;
         } catch (ClassCastException e) {

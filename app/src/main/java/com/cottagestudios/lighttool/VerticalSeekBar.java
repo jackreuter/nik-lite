@@ -1,12 +1,12 @@
-package jackreuter.niklite;
+package com.cottagestudios.lighttool;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.SeekBar;
 
-public class VerticalSeekBar extends SeekBar {
+public class VerticalSeekBar extends android.support.v7.widget.AppCompatSeekBar {
 
     protected OnSeekBarChangeListener changeListener;
 
@@ -38,9 +38,9 @@ public class VerticalSeekBar extends SeekBar {
     }
 
     @Override
-    protected synchronized void onMeasure(int widthMeasureSpec,
-                                          int heightMeasureSpec) {
-        super.onMeasure(heightMeasureSpec, widthMeasureSpec);
+    protected synchronized void onMeasure(int heightMeasureSpec,
+                                          int widthMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         setMeasuredDimension(getMeasuredHeight(), getMeasuredWidth());
     }
 
@@ -50,6 +50,7 @@ public class VerticalSeekBar extends SeekBar {
         super.onDraw(c);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (!isEnabled()) {

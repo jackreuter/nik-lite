@@ -1,3 +1,27 @@
 <resources>
-    <string name="app_name">NikLite</string>
+    <string name="app_name">Light Tool</string>
+    <string name="colorViewDescription">Shape with set color</string>
+    <string name="save_prompt">Please enter a name for the current preset:</string>
+    <string name="presets">- PRESETS -</string>
+    <string name="kelvin">KELVIN:</string>
+    <string name="shape_selected">Shape selected</string>
+    <string name="light">LIGHT: %.1fs</string>
+    <string name="dark">DARK: %.1fs</string>
+    <string name="r">R: %d</string>
+    <string name="g">G: %d</string>
+    <string name="b">B: %d</string>
+    <string name="k">%dK</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="yes_im_sure">Yes, I\'m sure.</string>
+    <string name="huge_mistake">I\'ve made a huge mistake.</string>
+    <string name="candle_flame">CANDLE FLAME</string>
+    <string name="domestic_lighting">DOMESTIC LIGHTING</string>
+    <string name="early_morning_evening">EARLY MORNING/EVENING</string>
+    <string name="fluorescent">FLUORESCENT</string>
+    <string name="flash">FLASH</string>
+    <string name="average_daylight">AVERAGE DAYLIGHT</string>
+    <string name="noon_sunlight">NOON SUNLIGHT</string>
+    <string name="shade">SHADE</string>
+    <string name="blue_sky">BLUE SKY</string>
+    <string name="delete">Delete %s?</string>
 </resources>

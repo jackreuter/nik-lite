@@ -12,7 +12,7 @@
         android:id="@+id/header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="- PRESETS -"
+        android:text="@string/presets"
         android:textStyle="bold"
         android:textColor="@android:color/black"
         android:layout_marginTop="@dimen/small_margin"
@@ -30,7 +30,7 @@
         android:layout_marginLeft="@dimen/small_margin"
         android:layout_marginRight="@dimen/small_margin"
         app:layoutManager="LinearLayoutManager"
-        tools:context=".FileListFragment"
+        tools:context="com.cottagestudios.lighttool.FileListFragment"
         tools:listitem="@layout/fragment_filelist"
         />
 
@@ -41,8 +41,8 @@
         android:background="@drawable/ic_baseline_keyboard_backspace_24px"
         android:layout_marginTop="-5dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="@dimen/small_margin"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/small_margin"
         android:onClick="onClickBack"
         />
 

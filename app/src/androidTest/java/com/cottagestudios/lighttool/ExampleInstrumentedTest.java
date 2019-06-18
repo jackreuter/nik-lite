@@ -1,4 +1,4 @@
-package jackreuter.niklite;
+package com.cottagestudios.lighttool;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
