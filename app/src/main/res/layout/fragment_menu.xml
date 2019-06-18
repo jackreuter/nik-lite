@@ -11,331 +11,399 @@
         android:layout_height="match_parent"
         android:background="@color/menu_background"/>
 
-    <Button
-        android:id="@+id/openButton"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="@dimen/outer_margin"
+    <RelativeLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/outer_margin"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/ic_baseline_folder_open_24px"/>
-
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/openButton"
-        android:layout_marginTop="@dimen/outer_margin"
-        android:layout_marginLeft="@dimen/medium_margin"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/ic_baseline_save_24px" />
-
-    <TextView
-        android:id="@+id/kelvinText"
-        android:fontFamily="sans-serif-medium"
-        android:text="KELVIN:"
-        android:layout_marginTop="@dimen/outer_margin"
-        android:textColor="#000000"
-        android:layout_toLeftOf="@+id/kelvinButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/text_size_menu"/>
-
-    <ToggleButton
-        android:id="@+id/kelvinButton"
-        android:textOff=""
-        android:textOn=""
-        android:layout_width="50dp"
-        android:layout_height="50dp"
         android:layout_marginRight="@dimen/outer_margin"
-        android:layout_marginTop="8dp"
-        android:layout_alignParentRight="true"
-        android:background="@layout/toggle_button_background"/>
-
-    <LinearLayout
-        android:id="@+id/shapeSelectorLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/outer_margin"
         android:layout_marginBottom="@dimen/medium_margin"
-        android:orientation="horizontal"
-        android:weightSum="5"
-        android:layout_below="@+id/saveButton"
-        android:layout_centerHorizontal="true"
-        >
-
-        <ImageView
-            android:id="@+id/fullScreenSelected"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/square_selected"
-            />
-
-        <ImageView
-            android:id="@+id/circleSelected"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/square_selected"
-            android:layout_marginLeft="@dimen/shape_selector_margin"
-            />
-
-        <ImageView
-            android:id="@+id/starSelected"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/square_selected"
-            android:layout_marginLeft="@dimen/shape_selector_margin"
-            />
-
-        <ImageView
-            android:id="@+id/heartSelected"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/square_selected"
-            android:layout_marginLeft="@dimen/shape_selector_margin"
-            />
-
-        <ImageView
-            android:id="@+id/plusSelected"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/square_selected"
-            android:layout_marginLeft="@dimen/shape_selector_margin"
-            />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/shapeLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/outer_margin"
-        android:orientation="horizontal"
-        android:weightSum="5"
-        android:layout_below="@+id/saveButton"
-        android:layout_centerHorizontal="true"
         >
 
         <Button
-            android:id="@+id/fullScreenButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/fullscreen_24px"
-            />
+            android:id="@+id/openButton"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/ic_baseline_folder_open_24px"/>
 
         <Button
-            android:id="@+id/circleButton"
+            android:id="@+id/saveButton"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/openButton"
+            android:layout_marginLeft="@dimen/medium_margin"
+            android:layout_centerVertical="true"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/ic_baseline_save_24px" />
+
+        <TextView
+            android:id="@+id/kelvinText"
+            android:fontFamily="sans-serif-medium"
+            android:text="KELVIN:"
+            android:textColor="@android:color/black"
+            android:layout_toLeftOf="@+id/kelvinButton"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_menu"/>
+
+        <ToggleButton
+            android:id="@+id/kelvinButton"
+            android:textOff=""
+            android:textOn=""
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/circle_24px"
-            android:layout_marginLeft="@dimen/shape_selector_margin"
-            />
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@layout/toggle_button_background"/>
 
-        <Button
-            android:id="@+id/starButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/star_24px"
-            android:layout_marginLeft="@dimen/shape_selector_margin"
-            />
+    </RelativeLayout>
 
-        <Button
-            android:id="@+id/heartButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/heart__24px"
-            android:layout_marginLeft="@dimen/shape_selector_margin"
-            />
-
-        <Button
-            android:id="@+id/plusButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/plus_24px"
-            android:layout_marginLeft="@dimen/shape_selector_margin"
-            />
-
-    </LinearLayout>
-
-    <ToggleButton
-        android:id="@+id/strobeButton"
-        android:textOff=""
-        android:textOn=""
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="@dimen/outer_margin"
+    <RelativeLayout
+        android:id="@+id/shapeSelectLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/headerLayout"
         android:layout_marginLeft="@dimen/outer_margin"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/shapeSelectorLayout"
-        android:background="@layout/toggle_button_background_vertical"/>
-
-    <TextView
-        android:id="@+id/lightDurationTextView"
-        android:fontFamily="sans-serif-medium"
-        android:layout_marginTop="@dimen/medium_margin"
-        android:textColor="@android:color/black"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/shapeSelectorLayout"
-        android:layout_toRightOf="@id/strobeButton"
-        android:textSize="@dimen/text_size_menu"/>
-
-    <SeekBar
-        android:id="@+id/lightDurationSeekBar"
-        android:layout_marginTop="@dimen/medium_margin"
         android:layout_marginRight="@dimen/outer_margin"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/shapeSelectorLayout"
-        android:layout_toRightOf="@+id/lightDurationTextView"
-        android:max="5000"
-        android:min="100"
-        android:progressDrawable="@drawable/seek_bar"
-        android:thumb="@drawable/seek_thumb"/>
+        android:layout_marginBottom="@dimen/outer_margin"
+        >
+        <LinearLayout
+            android:id="@+id/shapeSelectorLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="5"
+            android:layout_centerHorizontal="true"
+            >
 
-    <TextView
-        android:id="@+id/darkDurationTextView"
-        android:fontFamily="sans-serif-medium"
-        android:layout_marginTop="@dimen/medium_margin"
-        android:textColor="@android:color/black"
+            <ImageView
+                android:id="@+id/fullScreenSelected"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/square_selected"
+                />
+
+            <ImageView
+                android:id="@+id/circleSelected"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/square_selected"
+                android:layout_marginLeft="@dimen/shape_selector_margin"
+                />
+
+            <ImageView
+                android:id="@+id/starSelected"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/square_selected"
+                android:layout_marginLeft="@dimen/shape_selector_margin"
+                />
+
+            <ImageView
+                android:id="@+id/heartSelected"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/square_selected"
+                android:layout_marginLeft="@dimen/shape_selector_margin"
+                />
+
+            <ImageView
+                android:id="@+id/plusSelected"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/square_selected"
+                android:layout_marginLeft="@dimen/shape_selector_margin"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/shapeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="5"
+            android:layout_centerHorizontal="true"
+            >
+
+            <Button
+                android:id="@+id/fullScreenButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/fullscreen_24px"
+                />
+
+            <Button
+                android:id="@+id/circleButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circle_24px"
+                android:layout_marginLeft="@dimen/shape_selector_margin"
+                />
+
+            <Button
+                android:id="@+id/starButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/star_24px"
+                android:layout_marginLeft="@dimen/shape_selector_margin"
+                />
+
+            <Button
+                android:id="@+id/heartButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/heart__24px"
+                android:layout_marginLeft="@dimen/shape_selector_margin"
+                />
+
+            <Button
+                android:id="@+id/plusButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/plus_24px"
+                android:layout_marginLeft="@dimen/shape_selector_margin"
+                />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/strobeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/lightDurationSeekBar"
-        android:layout_toRightOf="@+id/strobeButton"
-        android:textSize="@dimen/text_size_menu"/>
+        android:layout_marginLeft="@dimen/outer_margin"
+        android:layout_marginRight="@dimen/outer_margin"
+        android:layout_marginBottom="@dimen/outer_margin"
+        android:layout_below="@+id/shapeSelectLayout"
+        >
 
-    <SeekBar
-        android:id="@+id/darkDurationSeekBar"
+        <ToggleButton
+            android:id="@+id/strobeButton"
+            android:textOff=""
+            android:textOn=""
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@layout/toggle_button_background_vertical"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/strobeButton"
+            android:orientation="vertical"
+            android:weightSum="2"
+            >
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/small_margin"
+                android:layout_weight="1"
+                >
+                <TextView
+                    android:id="@+id/lightDurationTextView"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@android:color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_menu"
+                    android:layout_centerVertical="true"
+                    />
+
+                <SeekBar
+                    android:id="@+id/lightDurationSeekBar"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:max="5000"
+                    android:min="100"
+                    android:progressDrawable="@drawable/seek_bar"
+                    android:thumb="@drawable/seek_thumb"
+                    android:layout_toRightOf="@id/lightDurationTextView"
+                    android:layout_centerVertical="true"
+                    />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                >
+                <TextView
+                    android:id="@+id/darkDurationTextView"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@android:color/black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_menu"
+                    android:layout_centerVertical="true"
+                    />
+
+                <SeekBar
+                    android:id="@+id/darkDurationSeekBar"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:max="5000"
+                    android:min="100"
+                    android:progressDrawable="@drawable/seek_bar"
+                    android:thumb="@drawable/seek_thumb"
+                    android:layout_toRightOf="@id/darkDurationTextView"
+                    android:layout_centerVertical="true"
+                    />
+            </RelativeLayout>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/colorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/strobeLayout"
+        android:layout_above="@id/lockButton"
+        android:layout_marginLeft="@dimen/outer_margin"
+        android:layout_marginRight="@dimen/outer_margin"
         android:layout_marginBottom="@dimen/medium_margin"
-        android:layout_marginTop="@dimen/medium_margin"
-        android:layout_marginRight="@dimen/outer_margin"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/lightDurationSeekBar"
-        android:layout_toRightOf="@id/darkDurationTextView"
-        android:max="5000"
-        android:min="100"
-        android:progressDrawable="@drawable/seek_bar"
-        android:thumb="@drawable/seek_thumb"/>
+        >
 
-    <TextView
-        android:id="@+id/kelvinTextView"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="@android:color/black"
-        android:layout_marginTop="@dimen/medium_margin"
-        android:layout_marginBottom="@dimen/small_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/darkDurationSeekBar"
-        android:layout_centerHorizontal="true"
-        android:textSize="@dimen/text_size_menu"/>
+        <TextView
+            android:id="@+id/kelvinTextView"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@android:color/black"
+            android:layout_marginBottom="@dimen/small_margin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:textSize="@dimen/text_size_menu"/>
 
+        <jackreuter.niklite.VerticalSeekBar
+            android:id="@+id/kelvinSeekBar"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_below="@id/kelvinTextView"
+            android:layout_above="@+id/colorNameTextView"
+            android:layout_centerHorizontal="true"
+            android:min="1000"
+            android:max="15000"
+            android:progressDrawable="@drawable/seek_bar"
+            android:thumb="@drawable/seek_thumb"/>
 
-    <jackreuter.niklite.VerticalSeekBar
-        android:id="@+id/kelvinSeekBar"
-        android:layout_marginBottom="@dimen/small_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/kelvinTextView"
-        android:layout_above="@+id/colorNameTextView"
-        android:layout_centerHorizontal="true"
-        android:min="1000"
-        android:max="15000"
-        android:progressDrawable="@drawable/seek_bar"
-        android:thumb="@drawable/seek_thumb"/>
+        <LinearLayout
+            android:id="@+id/colorSeekbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="3"
+            android:layout_above="@+id/colorNameTextView"
+            >
 
-    <TextView
-        android:id="@+id/redValueTextView"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="@android:color/black"
-        android:layout_marginTop="@dimen/medium_margin"
-        android:layout_marginRight="38dp"
-        android:layout_marginBottom="@dimen/small_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/greenValueTextView"
-        android:layout_below="@id/darkDurationSeekBar"
-        android:textSize="@dimen/text_size_menu"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                >
+                <TextView
+                    android:id="@+id/redValueTextView"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="@dimen/small_margin"
+                    android:layout_centerHorizontal="true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/text_size_menu"
+                    />
 
-    <TextView
-        android:id="@+id/greenValueTextView"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="@android:color/black"
-        android:layout_marginTop="@dimen/medium_margin"
-        android:layout_marginBottom="@dimen/small_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/darkDurationSeekBar"
-        android:layout_centerHorizontal="true"
-        android:textSize="@dimen/text_size_menu"/>
+                <jackreuter.niklite.VerticalSeekBar
+                    android:id="@+id/redSeekBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_below="@id/redValueTextView"
+                    android:layout_centerHorizontal="true"
+                    android:max="255"
+                    android:progressDrawable="@drawable/seek_bar"
+                    android:thumb="@drawable/seek_thumb"/>
+            </RelativeLayout>
 
-    <TextView
-        android:id="@+id/blueValueTextView"
-        android:fontFamily="sans-serif-medium"
-        android:textColor="@android:color/black"
-        android:layout_marginTop="@dimen/medium_margin"
-        android:layout_marginLeft="38dp"
-        android:layout_marginBottom="@dimen/small_margin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/greenValueTextView"
-        android:layout_below="@+id/darkDurationSeekBar"
-        android:textSize="@dimen/text_size_menu"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                >
+                <TextView
+                    android:id="@+id/greenValueTextView"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="@dimen/small_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="@dimen/text_size_menu"/>
 
-    <jackreuter.niklite.VerticalSeekBar
-        android:id="@+id/redSeekBar"
-        android:layout_marginRight="70dp"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/redValueTextView"
-        android:layout_above="@+id/colorNameTextView"
-        android:layout_toLeftOf="@id/greenSeekBar"
-        android:max="255"
-        android:progressDrawable="@drawable/seek_bar"
-        android:thumb="@drawable/seek_thumb"/>
+                <jackreuter.niklite.VerticalSeekBar
+                    android:id="@+id/greenSeekBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_below="@id/greenValueTextView"
+                    android:layout_centerHorizontal="true"
+                    android:max="255"
+                    android:progressDrawable="@drawable/seek_bar"
+                    android:thumb="@drawable/seek_thumb"/>
+            </RelativeLayout>
 
-    <jackreuter.niklite.VerticalSeekBar
-        android:id="@+id/greenSeekBar"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/greenValueTextView"
-        android:layout_above="@+id/colorNameTextView"
-        android:layout_centerHorizontal="true"
-        android:max="255"
-        android:progressDrawable="@drawable/seek_bar"
-        android:thumb="@drawable/seek_thumb"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                >
+                <TextView
+                    android:id="@+id/blueValueTextView"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@android:color/black"
+                    android:layout_marginBottom="@dimen/small_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="@dimen/text_size_menu"/>
 
-    <jackreuter.niklite.VerticalSeekBar
-        android:id="@+id/blueSeekBar"
-        android:layout_marginLeft="70dp"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/blueValueTextView"
-        android:layout_toRightOf="@id/greenSeekBar"
-        android:layout_above="@+id/colorNameTextView"
-        android:max="255"
-        android:progressDrawable="@drawable/seek_bar"
-        android:thumb="@drawable/seek_thumb"/>
+                <jackreuter.niklite.VerticalSeekBar
+                    android:id="@+id/blueSeekBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:layout_below="@id/blueValueTextView"
+                    android:layout_centerHorizontal="true"
+                    android:max="255"
+                    android:progressDrawable="@drawable/seek_bar"
+                    android:thumb="@drawable/seek_thumb"
+                    />
+            </RelativeLayout>
 
-    <TextView
-        android:id="@+id/colorNameTextView"
-        android:fontFamily="sans-serif-medium"
-        android:layout_margin="@dimen/small_margin"
-        android:textColor="@android:color/black"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/lockButton"
-        android:layout_centerHorizontal="true"
-        android:textSize="@dimen/text_size_menu"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/colorNameTextView"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@android:color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:textSize="@dimen/text_size_menu"/>
+
+    </RelativeLayout>
 
     <ToggleButton
         android:id="@+id/lockButton"
         android:textOff=""
         android:textOn=""
         android:layout_marginBottom="@dimen/outer_margin"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:background="@layout/lock_button_background"/>
