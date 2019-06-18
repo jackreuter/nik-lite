@@ -2,14 +2,9 @@ package jackreuter.niklite;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.icu.text.UnicodeSetSpanner;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +12,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
-import org.w3c.dom.Text;
 
 
 public class MenuFragment extends Fragment {
-
-    final int NUMBER_OF_SHAPES = 4;
 
     boolean kelvinMode;
     boolean lockMode;
@@ -64,6 +55,7 @@ public class MenuFragment extends Fragment {
         public void onGreenSeekBarChanged(int seekBarValue);
         public void onBlueSeekBarChanged(int seekBarValue);
         public void onKelvinSeekBarChanged(int seekBarValue);
+        public void onHugeMistakeMade();
 
     }
 
@@ -274,7 +266,9 @@ public class MenuFragment extends Fragment {
 
             public void onStartTrackingTouch(SeekBar seekBar) { }
 
-            public void onStopTrackingTouch(SeekBar seekBar) { }
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                easterEggCheck();
+            }
         });
 
         greenValueTextView = (TextView) view.findViewById(R.id.greenValueTextView);
@@ -296,7 +290,9 @@ public class MenuFragment extends Fragment {
 
             public void onStartTrackingTouch(SeekBar seekBar) { }
 
-            public void onStopTrackingTouch(SeekBar seekBar) { }
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                easterEggCheck();
+            }
         });
 
         blueValueTextView = (TextView) view.findViewById(R.id.blueValueTextView);
@@ -318,7 +314,9 @@ public class MenuFragment extends Fragment {
 
             public void onStartTrackingTouch(SeekBar seekBar) { }
 
-            public void onStopTrackingTouch(SeekBar seekBar) { }
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                easterEggCheck();
+            }
         });
 
         /** set up text view and seek bar for kelvin mode */
@@ -378,6 +376,45 @@ public class MenuFragment extends Fragment {
         redValueSeekBar.setVisibility(rgbVisibility);
         greenValueSeekBar.setVisibility(rgbVisibility);
         blueValueSeekBar.setVisibility(rgbVisibility);
+    }
+
+    /** check for 69 69 69 */
+    public void easterEggCheck() {
+        if (redValue == 69 && greenValue == 69 && blueValue == 69) {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            alertDialogBuilder.setTitle("Are you sure?");
+
+            // set dialog message
+            alertDialogBuilder
+                    //.setCancelable(false)
+                    .setPositiveButton("Yes, I'm sure.",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    dialog.cancel();
+                                }
+                            })
+                    .setNegativeButton("I've made a huge mistake.",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    redValueTextView.setText("R: 255");
+                                    greenValueTextView.setText("R: 255");
+                                    blueValueTextView.setText("R: 255");
+                                    redValueSeekBar.setProgress(255);
+                                    greenValueSeekBar.setProgress(255);
+                                    blueValueSeekBar.setProgress(255);
+                                    redValue = 255;
+                                    greenValue = 255;
+                                    blueValue = 255;
+                                    activityCallback.onHugeMistakeMade();
+                                }
+                            });
+
+            // create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+
+            // show it
+            alertDialog.show();
+        }
     }
 
     /** check if color has name, if so print to textView */

@@ -10,28 +10,41 @@
         xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <View android:id="@+id/backgroundView"
+        <View
+            android:id="@+id/backgroundView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#000000"/>
+            android:background="#000000"
+            />
 
-        <ImageView android:id="@+id/colorView"
+        <FrameLayout
+            android:id="@+id/colorFrame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:visibility="visible"/>
+            android:layout_centerInParent="true"
+            >
+            <ImageView
+                android:id="@+id/colorView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:visibility="visible"
+            />
+        </FrameLayout>
 
-        <Button android:id="@+id/menuButton"
+        <Button
+            android:id="@+id/menuButton"
             android:onClick="onClickMenu"
             android:layout_height="60dp"
             android:layout_width="60dp"
+            android:layout_marginRight="@dimen/outer_margin"
+            android:layout_marginBottom="@dimen/medium_margin"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true" />
 
         <jackreuter.niklite.VerticalSeekBar
             android:id="@+id/brightnessSeekBar"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="40dp"
             android:layout_width="wrap_content"
             android:layout_height="300dp"
             android:layout_above="@id/menuButton"

@@ -14,7 +14,6 @@ import android.graphics.Point;
 import android.os.Handler;
 import android.provider.Settings;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -28,6 +27,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -39,6 +39,7 @@ import java.util.Map;
 public class MainActivity extends Activity implements MenuFragment.MenuListener, FileListFragment.OnListFragmentInteractionListener {
 
     ImageView colorView;
+    FrameLayout colorFrame;
     Button menuButton;
     VerticalSeekBar brightnessBar;
 
@@ -120,7 +121,12 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
         //set content view AFTER ABOVE sequence (to avoid crash)
         this.setContentView(R.layout.activity_main);
 
+        View decorView = getWindow().getDecorView();
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        decorView.setSystemUiVisibility(uiOptions);
+
         colorView = (ImageView) findViewById(R.id.colorView);
+        colorFrame = (FrameLayout) findViewById(R.id.colorFrame);
         menuButton = (Button) findViewById(R.id.menuButton);
         menuButton.setBackgroundResource(R.drawable.ic_baseline_menu_24px);
         menuFrame = (FrameLayout) findViewById(R.id.menuFrame);
@@ -235,6 +241,17 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
         colorBackground();
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+
+        }
+    }
+
     /** Check whether this app has android write settings permission */
     private boolean hasWriteSettingsPermission(Context context)
     {
@@ -247,7 +264,9 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
     /** Start can modify system settings panel to let user change the write settings permission */
     private void changeWriteSettingsPermission(Context context)
     {
+        Toast.makeText(this, "Light panel needs permission to change screen brightness", Toast.LENGTH_LONG).show();
         Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
@@ -339,8 +358,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
         if (currentShapeIndex > 0) {
             colorView.setColorFilter(globalColorInt);
         } else {
-            colorView.setBackgroundColor(globalColorInt);
-            colorView.setColorFilter(globalColorInt);
+            colorFrame.setBackgroundColor(globalColorInt);
         }
     }
 
@@ -355,6 +373,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
                     tmpSize = MIN_SHAPE_WIDTH;
                 }
 
+                /**
                 if (tmpSize >= maxX) {
                     tmpSize = maxX;
                 }
@@ -362,6 +381,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
                 if (tmpSize >= maxY) {
                     tmpSize = maxY;
                 }
+                 */
 
                 shapeSize = tmpSize;
                 colorView.requestLayout();
@@ -645,7 +665,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
                 // user input validation
                 // filename cannot be blank
                 if (input.equals("")) {
-                    Toast.makeText(MainActivity.this, "Must enter filename", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Must enter a name", Toast.LENGTH_SHORT).show();
                 } else {
                     SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
                     Map<String, ?> allEntries = sharedPref.getAll();
@@ -659,7 +679,7 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
 
                     // filename must be unique
                     if (duplicateFound) {
-                        Toast.makeText(MainActivity.this, "Filename already exists", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "A preset with that name already exists", Toast.LENGTH_SHORT).show();
 
                     } else {
                         SettingsItem currentSettings = new SettingsItem(
@@ -710,19 +730,15 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
     @Override
     public void onFullscreenButtonClick() {
         currentShapeIndex = FULLSCREEN_INDEX;
-        colorView.requestLayout();
-        colorView.getLayoutParams().height = (int) (maxY);
-        colorView.getLayoutParams().width = (int) (maxX);
+        colorView.setVisibility(View.INVISIBLE);
         colorBackground();
     }
 
     @Override
     public void onCircleButtonClick() {
         currentShapeIndex = CIRCLE_INDEX;
-        colorView.requestLayout();
-        colorView.getLayoutParams().height = (int) (shapeSize);
-        colorView.getLayoutParams().width = (int) (shapeSize);
-        colorView.setBackgroundColor(Color.BLACK);
+        colorView.setVisibility(View.VISIBLE);
+        colorFrame.setBackgroundColor(Color.BLACK);
         colorView.setImageResource(shapeIDs[currentShapeIndex]);
         colorBackground();
     }
@@ -730,10 +746,8 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
     @Override
     public void onStarButtonClick() {
         currentShapeIndex = STAR_INDEX;
-        colorView.requestLayout();
-        colorView.getLayoutParams().height = (int) (shapeSize);
-        colorView.getLayoutParams().width = (int) (shapeSize);
-        colorView.setBackgroundColor(Color.BLACK);
+        colorView.setVisibility(View.VISIBLE);
+        colorFrame.setBackgroundColor(Color.BLACK);
         colorView.setImageResource(shapeIDs[currentShapeIndex]);
         colorBackground();
     }
@@ -741,10 +755,8 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
     @Override
     public void onHeartButtonClick() {
         currentShapeIndex = HEART_INDEX;
-        colorView.requestLayout();
-        colorView.getLayoutParams().height = (int) (shapeSize);
-        colorView.getLayoutParams().width = (int) (shapeSize);
-        colorView.setBackgroundColor(Color.BLACK);
+        colorView.setVisibility(View.VISIBLE);
+        colorFrame.setBackgroundColor(Color.BLACK);
         colorView.setImageResource(shapeIDs[currentShapeIndex]);
         colorBackground();
     }
@@ -752,10 +764,8 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
     @Override
     public void onPlusButtonClick() {
         currentShapeIndex = PLUS_INDEX;
-        colorView.requestLayout();
-        colorView.getLayoutParams().height = (int) (shapeSize);
-        colorView.getLayoutParams().width = (int) (shapeSize);
-        colorView.setBackgroundColor(Color.BLACK);
+        colorView.setVisibility(View.VISIBLE);
+        colorFrame.setBackgroundColor(Color.BLACK);
         colorView.setImageResource(shapeIDs[currentShapeIndex]);
         colorBackground();
     }
@@ -815,12 +825,21 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
         colorBackground();
     }
 
+    @Override
+    public void onHugeMistakeMade() {
+        rgbColorInt = Color.WHITE;
+        globalColorInt = rgbColorInt;
+        colorBackground();
+    }
+
     /** delete the selected save file */
     @Override
     public void onDeleteButtonClicked(final String item) {
         // get delete_prompt.xml view
         LayoutInflater li = LayoutInflater.from(MainActivity.this);
         View deletePromptView = li.inflate(R.layout.delete_prompt, null);
+        TextView deletePromptText = deletePromptView.findViewById(R.id.textView1);
+        deletePromptText.setText("Delete " + item + "?");
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 MainActivity.this);
@@ -859,7 +878,6 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
     /** open selected save file */
     @Override
     public void onItemClicked(String item) {
-        Log.d("yoo", item);
         SharedPreferences sharedPref = getPreferences(MODE_PRIVATE);
         Boolean strobeWasRunning = strobeMode;
 
@@ -885,22 +903,21 @@ public class MainActivity extends Activity implements MenuFragment.MenuListener,
             }
         }
 
+        colorView.requestLayout();
+        colorView.getLayoutParams().height = (int) (shapeSize);
+        colorView.getLayoutParams().width = (int) (shapeSize);
+
         if (currentShapeIndex > 0) {
-            colorView.setBackgroundColor(Color.BLACK);
-            colorView.requestLayout();
-            colorView.getLayoutParams().height = (int) (shapeSize);
-            colorView.getLayoutParams().width = (int) (shapeSize);
+            colorFrame.setBackgroundColor(Color.BLACK);
             colorView.setImageResource(shapeIDs[currentShapeIndex]);
+            colorView.setVisibility(View.VISIBLE);
         } else {
-            colorView.requestLayout();
-            colorView.getLayoutParams().height = (int) (maxY);
-            colorView.getLayoutParams().width = (int) (maxX);
+            colorView.setVisibility(View.INVISIBLE);
         }
 
         colorBackground();
         killFileListFragment();
     }
-
 
     /** define strobe light method */
     Runnable runStrobe = new Runnable() {

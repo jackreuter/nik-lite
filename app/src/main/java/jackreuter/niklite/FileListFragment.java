@@ -51,14 +51,12 @@ public class FileListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_filelist_list, container, false);
+        RecyclerView fileListRecyclerView = view.findViewById(R.id.list);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new MyFileListRecyclerViewAdapter(filenames, mListener));
-        }
+        Context context = view.getContext();
+        fileListRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        fileListRecyclerView.setAdapter(new MyFileListRecyclerViewAdapter(filenames, mListener));
         return view;
     }
 
