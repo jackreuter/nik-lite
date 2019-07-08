@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <View
+        android:id="@+id/menuBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/menu_background"/>
+
+    <TextView
+        android:id="@+id/infoTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/outer_margin"
+        android:layout_marginStart="@dimen/outer_margin"
+        android:layout_marginEnd="@dimen/outer_margin"
+        android:layout_marginBottom="@dimen/small_margin"
+        android:layout_centerHorizontal="true"
+        android:text="@string/info_title_text"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/text_size_filenames"
+        />
+
+    <ImageView
+        android:id="@+id/infoImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/infoTitle"
+        android:layout_marginStart="@dimen/outer_margin"
+        android:layout_marginEnd="@dimen/outer_margin"
+        android:layout_marginBottom="@dimen/small_margin"
+        android:adjustViewBounds="true"
+        android:src="@drawable/info_image"
+        />
+
+    <TextView
+        android:id="@+id/infoText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/outer_margin"
+        android:layout_marginEnd="@dimen/outer_margin"
+        android:layout_marginBottom="@dimen/outer_margin"
+        android:text="@string/info_string"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/text_size_menu"
+        android:layout_marginTop="@dimen/small_margin"
+        android:layout_below="@+id/infoImage"
+        />
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:background="@drawable/ic_baseline_keyboard_backspace_24px"
+        android:layout_marginTop="-5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/small_margin"
+        android:onClick="onClickBack"
+        />
+
+</RelativeLayout>

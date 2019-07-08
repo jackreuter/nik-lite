@@ -53,6 +53,13 @@ public class FileListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_filelist_list, container, false);
         RecyclerView fileListRecyclerView = view.findViewById(R.id.list);
 
+        // Prevent menu from closing on background click
+        final View backgroundView = view.findViewById(R.id.menuBackground);
+        backgroundView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            }
+        });
+
         // Set the adapter
         Context context = view.getContext();
         fileListRecyclerView.setLayoutManager(new LinearLayoutManager(context));

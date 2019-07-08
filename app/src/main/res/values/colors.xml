@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
     <color name="seek_bar_background">#222222</color>
     <color name="seek_bar_progress">#000000</color>
     <color name="seek_bar_secondary_progress">#3399CC</color>

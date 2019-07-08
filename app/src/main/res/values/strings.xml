@@ -24,4 +24,8 @@
     <string name="shade">SHADE</string>
     <string name="blue_sky">BLUE SKY</string>
     <string name="delete">Delete %s?</string>
+    <string name="info_string">The only way I can explain your photo skills are comparing them to a savage young Mike Tyson training hard back in the day and when he would come out he smashed everyone! Your skills are insane man! [Shy Guy Gelato]</string>
+    <string name="info_title_text">About Cottage Studios</string>
+    <string name="preset_saved">Preset saved</string>
+    <string name="permission">Light Tool needs permission to change screen brightness</string>
 </resources>

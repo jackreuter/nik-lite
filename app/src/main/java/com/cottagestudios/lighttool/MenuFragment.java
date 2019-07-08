@@ -137,10 +137,10 @@ public class MenuFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_menu, container, false);
         readBundle(getArguments());
 
+        // Prevent menu from closing on background click
         final View backgroundView = view.findViewById(R.id.menuBackground);
         backgroundView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                backgroundViewClicked(v);
             }
         });
 
@@ -507,9 +507,6 @@ public class MenuFragment extends Fragment {
         }
         return colorName;
     }
-
-    /** prevents menu from being closed when background of menu is clicked */
-    public void backgroundViewClicked(View view) { }
 
     /** open dialog menu to select user saved settings */
     public void openButtonClicked(View view) {

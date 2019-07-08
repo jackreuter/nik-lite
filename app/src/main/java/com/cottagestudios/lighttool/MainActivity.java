@@ -47,6 +47,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
     FrameLayout menuFrame;
     MenuFragment menuFragment;
     FileListFragment fileListFragment;
+    InfoMenuFragment infoMenuFragment;
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
 
@@ -58,8 +59,8 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
     public static final int TEMPERATURE_MAX = 15000;
     public static final int TEMPERATURE_MIN = 1000;
     public static final int DEFAULT_TEMPERATURE = 1500;
-    public static final int DEFAULT_LIGHT_DURATION = 500; // in milliseconds
-    public static final int DEFAULT_DARK_DURATION = 1000; // in milliseconds
+    public static final int DEFAULT_LIGHT_DURATION = 100; // in milliseconds
+    public static final int DEFAULT_DARK_DURATION = 500; // in milliseconds
     public static final double MENU_OUTER_MARGIN_PERCENT = 0.1;
     public static final int MAX_SHAPE_SIZE_MULTIPLIER = 15; // shape can go as big as 15x screen size
     public static final int FULLSCREEN_INDEX = 0;
@@ -83,7 +84,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
     Display mdisp;
     Point mdispSize;
 
-    boolean kelvinMode, lockMode, strobeMode, isDark, menuEnabled, fileListEnabled;
+    boolean kelvinMode, lockMode, strobeMode, isDark, menuEnabled, fileListEnabled, infoMenuEnabled;
 
     int [] shapeIDs;
     int currentShapeIndex;
@@ -108,6 +109,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
 
         savedInstanceState.putBoolean("menuEnabled", menuEnabled);
         savedInstanceState.putBoolean("fileListEnabled", fileListEnabled);
+        savedInstanceState.putBoolean("infoMenuEnabled", infoMenuEnabled);
 
         //declare values before saving the state
         super.onSaveInstanceState(savedInstanceState);
@@ -212,6 +214,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
 
             menuEnabled = savedInstanceState.getBoolean("menuEnabled");
             fileListEnabled = savedInstanceState.getBoolean("fileListEnabled");
+            infoMenuEnabled = savedInstanceState.getBoolean("infoMenuEnabled");
         } else {
             globalColorInt = Color.WHITE; //default color WHITE
             rgbColorInt = Color.WHITE; //default color WHITE
@@ -230,6 +233,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
 
             menuEnabled = false;
             fileListEnabled = false;
+            infoMenuEnabled = false;
         }
 
         isDark = false;
@@ -246,6 +250,96 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
             colorView.setImageResource(shapeIDs[currentShapeIndex]);
         }
         colorBackground();
+
+        //check if first time app opened, create default presets
+        SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        boolean firstOpen = sharedPref.getBoolean("first open", true);
+        if (firstOpen) {
+            SettingsItem strobePreset = new SettingsItem(
+                    "Strobe light",
+                    globalColorInt,
+                    rgbColorInt,
+                    temperature,
+                    lightDuration,
+                    darkDuration,
+                    shapeSize,
+                    FULLSCREEN_INDEX,
+                    false,
+                    true,
+                    true
+            );
+
+            SettingsItem heartPreset = new SettingsItem(
+                    "Rose heart",
+                    Color.rgb(MAX_SATURATION, 0, MAX_SATURATION/2),
+                    Color.rgb(MAX_SATURATION, 0, MAX_SATURATION/2),
+                    temperature,
+                    lightDuration,
+                    darkDuration,
+                    shapeSize,
+                    HEART_INDEX,
+                    false,
+                    true,
+                    false
+            );
+
+            SettingsItem starPreset = new SettingsItem(
+                    "Candle star",
+                    getColorIntFromTemperature(),
+                    rgbColorInt,
+                    temperature,
+                    lightDuration,
+                    darkDuration,
+                    shapeSize / 2,
+                    STAR_INDEX,
+                    true,
+                    true,
+                    false
+            );
+
+            SettingsItem bucciPreset = new SettingsItem(
+                    "The Bucci",
+                    Color.rgb(178, 108, 88),
+                    Color.rgb(178, 108, 88),
+                    temperature,
+                    lightDuration,
+                    darkDuration,
+                    shapeSize * (float) 1.3,
+                    CIRCLE_INDEX,
+                    false,
+                    true,
+                    false
+            );
+
+            SettingsItem reuterPreset = new SettingsItem(
+                    "The Reuter",
+                    Color.rgb(30, 220, 140),
+                    Color.rgb(30, 220, 140),
+                    temperature,
+                    lightDuration,
+                    darkDuration,
+                    shapeSize * 6,
+                    PLUS_INDEX,
+                    false,
+                    true,
+                    false
+            );
+
+            Gson gson = new Gson();
+            String strobeJson = gson.toJson(strobePreset);
+            String heartJson = gson.toJson(heartPreset);
+            String starJson = gson.toJson(starPreset);
+            String bucciJson = gson.toJson(bucciPreset);
+            String reuterJson = gson.toJson(reuterPreset);
+            editor.putString("Strobe light", strobeJson);
+            editor.putString("Rose heart", heartJson);
+            editor.putString("Candle star", starJson);
+            editor.putString("The Bucci", bucciJson);
+            editor.putString("The Reuter", reuterJson);
+            editor.putBoolean("first open", false);
+            editor.apply();
+        }
     }
 
     @Override
@@ -271,7 +365,7 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
     /** Start can modify system settings panel to let user change the write settings permission */
     private void changeWriteSettingsPermission(Context context)
     {
-        Toast.makeText(this, "Light panel needs permission to change screen brightness", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getString(R.string.permission), Toast.LENGTH_LONG).show();
         Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
@@ -311,6 +405,10 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
 
         if (fileListEnabled) {
             killFileListFragment();
+        }
+
+        if (infoMenuEnabled) {
+            killInfoMenuFragment();
         }
 
         scaleDetector.onTouchEvent(event);
@@ -411,6 +509,25 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
         menuEnabled = true;
     }
 
+    @Override
+    public void onOpenButtonClick () {
+        SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+        Map<String, ?> allEntries = sharedPref.getAll();
+        ArrayList<String> filenames = new ArrayList<>();
+        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
+            if (!entry.getKey().equals("first open")) {
+                filenames.add(entry.getKey());
+            }
+        }
+        Collections.sort(filenames);
+        fileListEnabled = true;
+        menuEnabled = false;
+        fileListFragment = FileListFragment.newInstance(filenames);
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.menuFrame, fileListFragment, "fileListFragment");
+        fragmentTransaction.commit();
+    }
+
     /** go back to settings menu from file list menu */
     public void onClickBack(View view) {
         setUIEnabled(false);
@@ -431,6 +548,16 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
         fragmentTransaction.commit();
         menuEnabled = true;
         fileListEnabled = false;
+    }
+
+    /** brings up information menu fragment */
+    public void onClickInfo(View view) {
+        infoMenuEnabled = true;
+        menuEnabled = false;
+        infoMenuFragment = InfoMenuFragment.newInstance();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.menuFrame, infoMenuFragment, "infoMenuFragment");
+        fragmentTransaction.commit();
     }
 
     /** colorWheel logic for non-kelvin mode */
@@ -616,23 +743,6 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
             if (blue > MAX_SATURATION) { blue = MAX_SATURATION; }
             return (int) blue;
         }
-    }
-
-    @Override
-    public void onOpenButtonClick () {
-        SharedPreferences sharedPref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
-        Map<String, ?> allEntries = sharedPref.getAll();
-        ArrayList<String> filenames = new ArrayList<>();
-        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            filenames.add(entry.getKey());
-        }
-        Collections.sort(filenames);
-        fileListEnabled = true;
-        menuEnabled = false;
-        fileListFragment = FileListFragment.newInstance(filenames);
-        fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.menuFrame, fileListFragment, "fileListFragment");
-        fragmentTransaction.commit();
     }
 
     @Override
@@ -1010,6 +1120,17 @@ public class MainActivity extends FragmentActivity implements MenuFragment.MenuL
         }
         fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.remove(fileListFragment);
+        fragmentTransaction.commit();
+    }
+
+    /** close file list fragment */
+    public void killInfoMenuFragment() {
+        infoMenuEnabled = false;
+        if (infoMenuFragment == null) {
+            infoMenuFragment = (InfoMenuFragment) fragmentManager.findFragmentByTag("infoMenuFragment");
+        }
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.remove(infoMenuFragment);
         fragmentTransaction.commit();
     }
 }
